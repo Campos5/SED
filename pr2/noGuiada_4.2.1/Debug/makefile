@@ -28,47 +28,47 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_FLASH += \
-Guiada.hex \
+NoGuiada.hex \
 
 SECONDARY_LIST += \
-Guiada.lst \
+NoGuiada.lst \
 
 SECONDARY_SIZE += \
-Guiada.siz \
+NoGuiada.siz \
 
 
 # All Target
-all: Guiada.elf secondary-outputs
+all: NoGuiada.elf secondary-outputs
 
 # Tool invocations
-Guiada.elf: $(OBJS) $(USER_OBJS)
+NoGuiada.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Sourcery Windows GCC C Linker'
-	arm-none-eabi-gcc -T"C:\hlocal\EclipseARMwspace\Guiada\commonEclipse\ram_ice.ld" -nostartfiles -Wl,-Map,Guiada.map -mcpu=arm7tdmi -g3 -gdwarf-2 -o "Guiada.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -T"C:\hlocal\sed\SED\pr2\noGuiada_4.2.1\commonEclipse\ram_ice.ld" -nostartfiles -Wl,-Map,NoGuiada.map -mcpu=arm7tdmi -g3 -gdwarf-2 -o "NoGuiada.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-Guiada.hex: Guiada.elf
+NoGuiada.hex: NoGuiada.elf
 	@echo 'Invoking: ARM Sourcery Windows GNU Create Flash Image'
-	arm-none-eabi-objcopy -O binary Guiada.elf  "Guiada.hex"
+	arm-none-eabi-objcopy -O binary NoGuiada.elf  "NoGuiada.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Guiada.lst: Guiada.elf
+NoGuiada.lst: NoGuiada.elf
 	@echo 'Invoking: ARM Sourcery Windows GNU Create Listing'
-	arm-none-eabi-objdump -h -S Guiada.elf > "Guiada.lst"
+	arm-none-eabi-objdump -h -S NoGuiada.elf > "NoGuiada.lst"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Guiada.siz: Guiada.elf
+NoGuiada.siz: NoGuiada.elf
 	@echo 'Invoking: ARM Sourcery Windows GNU Print Size'
-	arm-none-eabi-size  --format=berkeley Guiada.elf
+	arm-none-eabi-size  --format=berkeley NoGuiada.elf
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(SECONDARY_SIZE)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(SECONDARY_FLASH)$(EXECUTABLES)$(SECONDARY_LIST)$(S_UPPER_DEPS) Guiada.elf
+	-$(RM) $(SECONDARY_SIZE)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(SECONDARY_FLASH)$(EXECUTABLES)$(SECONDARY_LIST)$(S_UPPER_DEPS) NoGuiada.elf
 	-@echo ' '
 
 secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_LIST) $(SECONDARY_SIZE)
