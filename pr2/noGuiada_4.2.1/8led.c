@@ -43,7 +43,7 @@ void D8Led_init(void)
 {
 /* Estado inicial del display con todos los segmentos iluminados
 (buscar en los ficheros de cabecera la direccion implicada--->44blib.h) */ 
-	LED8ADDR = 0; 
+	//LED8ADDR = 0;
 }
 void D8Led_symbol(int value)
 {
