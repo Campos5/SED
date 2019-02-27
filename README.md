@@ -7,12 +7,12 @@ Descargar e instalar el entorno de eclipseARM, así como OpenOCD (link en el cam
 ### Creación/importación de proyecto
 
 * Creación de uno nuevo
-** como C Project
-** **ARM Cross Target Application** Sourcery G++ Lite
+  * como C Project
+  * **ARM Cross Target Application** Sourcery G++ Lite
 
 * Importar
-** File/import -> General -> Existing Projects into Workspace
-** Seleccionar carpeta
+  * File/import -> General -> Existing Projects into Workspace
+  * Seleccionar carpeta
 
 ### Definir directorios y linkers
 * Propiedades del proyecto
