@@ -1,9 +1,9 @@
 Archive member included because of file (symbol)
 
-c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
                               ./commonEclipse/44blib.o (__aeabi_idiv)
-c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
-                              c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o) (__aeabi_idiv0)
+c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+                              c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o) (__aeabi_idiv0)
 
 Allocating common symbols
 Common symbol       size              file
@@ -29,8 +29,8 @@ LOAD ./led.o
 LOAD ./main.o
 LOAD ./timer.o
 START GROUP
-LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a
-LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib\libc.a
+LOAD c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a
+LOAD c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib\libc.a
 END GROUP
                 0x0c000000                . = 0xc000000
                 0x0c000000                Image_RO_Base = .
@@ -68,11 +68,11 @@ END GROUP
  .text          0x0c0011f8      0x13c ./timer.o
                 0x0c0011f8                timer_init
                 0x0c001300                timer_ISR
- .text          0x0c001334      0x148 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+ .text          0x0c001334      0x148 c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
                 0x0c001334                __divsi3
                 0x0c001334                __aeabi_idiv
                 0x0c00145c                __aeabi_idivmod
- .text          0x0c00147c        0x4 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+ .text          0x0c00147c        0x4 c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
                 0x0c00147c                __aeabi_idiv0
                 0x0c00147c                __aeabi_ldiv0
                 0x0c001480                Image_RO_Limit = .
@@ -106,8 +106,8 @@ END GROUP
  .data          0x0c0014d8        0x0 ./led.o
  .data          0x0c0014d8        0x0 ./main.o
  .data          0x0c0014d8        0x0 ./timer.o
- .data          0x0c0014d8        0x0 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
- .data          0x0c0014d8        0x0 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+ .data          0x0c0014d8        0x0 c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+ .data          0x0c0014d8        0x0 c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
 
 .rodata
  *(.rodata)
@@ -125,8 +125,8 @@ END GROUP
  .bss           0x0c0014dc        0x0 ./led.o
  .bss           0x0c0014dc        0x0 ./main.o
  .bss           0x0c0014dc        0x0 ./timer.o
- .bss           0x0c0014dc        0x0 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
- .bss           0x0c0014dc        0x0 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+ .bss           0x0c0014dc        0x0 c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+ .bss           0x0c0014dc        0x0 c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
  COMMON         0x0c0014dc        0x8 ./commonEclipse/44blib.o
                 0x0c0014dc                fileSize
                 0x0c0014e0                downPt
@@ -162,9 +162,9 @@ END GROUP
  .ARM.attributes
                 0x0000013e       0x32 ./timer.o
  .ARM.attributes
-                0x00000170       0x1a c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+                0x00000170       0x1a c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
  .ARM.attributes
-                0x0000018a       0x18 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+                0x0000018a       0x18 c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
 
 .comment        0x00000000       0x2a
  .comment       0x00000000       0x2a ./commonEclipse/44blib.o
@@ -175,27 +175,27 @@ END GROUP
  .comment       0x00000000       0x2b ./main.o
  .comment       0x00000000       0x2b ./timer.o
 
-.debug_info     0x00000000      0x680
+.debug_info     0x00000000      0x69c
  *(.debug_info)
- .debug_info    0x00000000       0x71 ./commonEclipse/44binit.o
- .debug_info    0x00000071      0x229 ./commonEclipse/44blib.o
- .debug_info    0x0000029a       0xa4 ./8led.o
- .debug_info    0x0000033e       0x60 ./init.o
- .debug_info    0x0000039e       0xfe ./keyboard.o
- .debug_info    0x0000049c      0x104 ./led.o
- .debug_info    0x000005a0       0x8c ./main.o
- .debug_info    0x0000062c       0x54 ./timer.o
+ .debug_info    0x00000000       0x7f ./commonEclipse/44binit.o
+ .debug_info    0x0000007f      0x229 ./commonEclipse/44blib.o
+ .debug_info    0x000002a8       0xa4 ./8led.o
+ .debug_info    0x0000034c       0x6e ./init.o
+ .debug_info    0x000003ba       0xfe ./keyboard.o
+ .debug_info    0x000004b8      0x104 ./led.o
+ .debug_info    0x000005bc       0x8c ./main.o
+ .debug_info    0x00000648       0x54 ./timer.o
 
-.debug_line     0x00000000      0xb56
+.debug_line     0x00000000      0xb7c
  *(.debug_line)
  .debug_line    0x00000000      0x116 ./commonEclipse/44binit.o
- .debug_line    0x00000116      0x3d9 ./commonEclipse/44blib.o
- .debug_line    0x000004ef       0x91 ./8led.o
- .debug_line    0x00000580       0x3d ./init.o
- .debug_line    0x000005bd       0xd9 ./keyboard.o
- .debug_line    0x00000696       0xae ./led.o
- .debug_line    0x00000744      0x372 ./main.o
- .debug_line    0x00000ab6       0xa0 ./timer.o
+ .debug_line    0x00000116      0x3c9 ./commonEclipse/44blib.o
+ .debug_line    0x000004df       0x9f ./8led.o
+ .debug_line    0x0000057e       0x3d ./init.o
+ .debug_line    0x000005bb       0xe7 ./keyboard.o
+ .debug_line    0x000006a2       0xbc ./led.o
+ .debug_line    0x0000075e      0x370 ./main.o
+ .debug_line    0x00000ace       0xae ./timer.o
 
 .debug_abbrev   0x00000000      0x3b0
  *(.debug_abbrev)
@@ -216,7 +216,7 @@ END GROUP
  .debug_frame   0x0000019c      0x110 ./led.o
  .debug_frame   0x000002ac       0x30 ./main.o
  .debug_frame   0x000002dc       0x5c ./timer.o
- .debug_frame   0x00000338       0x20 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+ .debug_frame   0x00000338       0x20 c:/users/campos/desktop/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
 OUTPUT(NoGuiada.elf elf32-littlearm)
 
 .debug_aranges  0x00000000      0x100
@@ -281,16 +281,16 @@ OUTPUT(NoGuiada.elf elf32-littlearm)
  .debug_pubtypes
                 0x00000012       0x12 ./main.o
 
-.debug_str      0x00000000      0x235
- .debug_str     0x00000000      0x12b ./commonEclipse/44blib.o
-                                0x169 (size before relaxing)
- .debug_str     0x0000012b       0x2f ./8led.o
-                                 0x73 (size before relaxing)
- .debug_str     0x0000015a       0x44 ./keyboard.o
-                                 0x94 (size before relaxing)
- .debug_str     0x0000019e       0x68 ./led.o
-                                 0x9f (size before relaxing)
- .debug_str     0x00000206        0xf ./main.o
-                                 0xcf (size before relaxing)
- .debug_str     0x00000215       0x20 ./timer.o
-                                 0x57 (size before relaxing)
+.debug_str      0x00000000      0x243
+ .debug_str     0x00000000      0x139 ./commonEclipse/44blib.o
+                                0x177 (size before relaxing)
+ .debug_str     0x00000139       0x2f ./8led.o
+                                 0x81 (size before relaxing)
+ .debug_str     0x00000168       0x44 ./keyboard.o
+                                 0xa2 (size before relaxing)
+ .debug_str     0x000001ac       0x68 ./led.o
+                                 0xad (size before relaxing)
+ .debug_str     0x00000214        0xf ./main.o
+                                 0xdd (size before relaxing)
+ .debug_str     0x00000223       0x20 ./timer.o
+                                 0x65 (size before relaxing)

@@ -1,10 +1,10 @@
 timer.d timer.o: ../timer.c \
- C:\hlocal\sed\SED\pr2\noGuiada_4.2.1\commonEclipse/44b.h \
- C:\hlocal\sed\SED\pr2\noGuiada_4.2.1\commonEclipse/option.h \
- C:\hlocal\sed\SED\pr2\noGuiada_4.2.1\commonEclipse/44blib.h
+ C:\Users\Campos\Desktop\SED\SED\pr2\noGuiada_4.2.1\commonEclipse/44b.h \
+ C:\Users\Campos\Desktop\SED\SED\pr2\noGuiada_4.2.1\commonEclipse/option.h \
+ C:\Users\Campos\Desktop\SED\SED\pr2\noGuiada_4.2.1\commonEclipse/44blib.h
 
-C:\hlocal\sed\SED\pr2\noGuiada_4.2.1\commonEclipse/44b.h:
+C:\Users\Campos\Desktop\SED\SED\pr2\noGuiada_4.2.1\commonEclipse/44b.h:
 
-C:\hlocal\sed\SED\pr2\noGuiada_4.2.1\commonEclipse/option.h:
+C:\Users\Campos\Desktop\SED\SED\pr2\noGuiada_4.2.1\commonEclipse/option.h:
 
-C:\hlocal\sed\SED\pr2\noGuiada_4.2.1\commonEclipse/44blib.h:
+C:\Users\Campos\Desktop\SED\SED\pr2\noGuiada_4.2.1\commonEclipse/44blib.h:

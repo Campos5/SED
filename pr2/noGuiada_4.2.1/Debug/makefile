@@ -44,7 +44,7 @@ all: NoGuiada.elf secondary-outputs
 NoGuiada.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Sourcery Windows GCC C Linker'
-	arm-none-eabi-gcc -T"C:\hlocal\sed\SED\pr2\noGuiada_4.2.1\commonEclipse\ram_ice.ld" -nostartfiles -Wl,-Map,NoGuiada.map -mcpu=arm7tdmi -g3 -gdwarf-2 -o "NoGuiada.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -T"C:\Users\Campos\Desktop\SED\SED\pr2\noGuiada_4.2.1\commonEclipse\ram_ice.ld" -nostartfiles -Wl,-Map,NoGuiada.map -mcpu=arm7tdmi -g3 -gdwarf-2 -o "NoGuiada.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
