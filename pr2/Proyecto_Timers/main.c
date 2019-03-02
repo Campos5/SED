@@ -22,7 +22,7 @@ void Main(void)
 	timer_init();
 	// Inicialización del teclado matricial
 	//keyboard_init();
-	/* Establecer valor inicial de los LEDs */
-	//leds_off();
-	while (1); // espera
+	/*Inicialización de los botones*/
+
+	while (1); // esperar
 }

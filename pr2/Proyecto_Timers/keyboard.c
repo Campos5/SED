@@ -13,14 +13,15 @@ extern void leds_on();
 extern void leds_off();
 extern void led1_on();
 extern void led2_on();
-extern void restartTimer(int timer);
 extern void pararTimer(int timer);
+extern void lanzarTimer(int timer);
 
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
 void init();
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
 void jugadorPierde();
+void terminarPartida(int caso);
 
 /*--- Codigo de las funciones ---*/
 
@@ -78,8 +79,12 @@ void keyboard_init()
 	/* Por precaucion, se vuelven a borrar los bits de INTPND correspondientes*/
 		//
 	rI_ISPC = BIT_EINT1;
+
+
 	rTCON = rTCON | (0x01<<8);// iniciar timer1
 }
+
+
 void KeyboardInt(void)
 {
 	/* Esperar trp mediante la funcion DelayMs()*/
@@ -123,7 +128,8 @@ void KeyboardInt(void)
 	//
 	rI_ISPC = BIT_EINT1;
 
-	rTCON = rTCON | (0x01<<8);// iniciar timer1
+	lanzarTimer(1);
+	//rTCON = rTCON | (0x01<<8);// iniciar timer1
 }
 int key_read()
 {
@@ -177,10 +183,10 @@ void jugadorPierde(){
 
 	if(turno == 1){
 		ganadas2 += 1;
-		D8Led_symbol(ganadas2);
+		D8Led_symbol(2);
 	}else{
 		ganadas1 += 1;
-		D8Led_symbol(ganadas1);
+		D8Led_symbol(1);
 	}
 
 	int var;
@@ -190,7 +196,7 @@ void jugadorPierde(){
 
 	DelayMs(100);
 	leds_on();
-	DelayMs(10);
+	DelayMs(1000);
 	leds_off();
 	DelayMs(20);
 
@@ -203,6 +209,37 @@ void jugadorPierde(){
 		led2_on();
 		turno = 2;
 		break;
+	}
+	lanzarTimer(1);
+
+}
+
+void terminarPartida(int caso)
+{
+	leds_off();
+	if (caso == 0){
+		pararTimer(1);
+		//led jugador pierde
+		//display partidas ganadas
+		if(ganadas1 < ganadas2)
+		{
+			led1_on();
+			D8Led_symbol(ganadas1);
+		}else{
+			led2_on();
+			D8Led_symbol(ganadas2);
+		}
+
+		lanzarTimer(2);
+	}else{
+		if(ganadas1 >= ganadas2)
+		{
+			led1_on();
+			D8Led_symbol(ganadas1);
+		}else{
+			led2_on();
+			D8Led_symbol(ganadas2);
+		}
 	}
 
 }
