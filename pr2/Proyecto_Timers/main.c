@@ -5,6 +5,7 @@
 /*--- funciones externas ---*/
 extern void leds_off();
 extern void led1_on();
+extern void leds_on();
 extern void timer_init();
 extern void keyboard_init();
 //Declarar funciones externas de inicialización
@@ -17,11 +18,11 @@ void Main(void)
 	/* Inicializar controladores */
 	sys_init(); // Inicializacion de la placa, interrupciones y puertos
 	// Inicializacion del temporizador
+	leds_on();
 	timer_init();
 	// Inicialización del teclado matricial
-	keyboard_init();
+	//keyboard_init();
 	/* Establecer valor inicial de los LEDs */
-	leds_off();
-	led1_on();
+	//leds_off();
 	while (1); // espera
 }

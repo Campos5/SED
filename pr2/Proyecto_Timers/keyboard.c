@@ -8,16 +8,28 @@
 volatile UCHAR *keyboard_base = (UCHAR *)0x06000000;
 int key;
 /*--- Funciones externas ---*/
-void D8Led_symbol(int value);
+extern void D8Led_symbol(int value);
+extern void leds_on();
+extern void leds_off();
+extern void led1_on();
+extern void led2_on();
+extern void restartTimer(int timer);
+extern void pararTimer(int timer);
+
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
 void init();
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
+void jugadorPierde();
+
 /*--- Codigo de las funciones ---*/
 
 
 /*--- Variables Globales ---*/
 int teclas_pulsadas[16]; //Array que indica las teclas que están pulsadas. 1-Ya pulsada, 0-No
+int ganadas1;
+int ganadas2;
+int turno;
 
 void init()
 {
@@ -31,7 +43,9 @@ void keyboard_init()
 	for (var = 0; var < 16; ++var) {
 		teclas_pulsadas[var] = 0;
 	}
-
+	ganadas1 = 0;
+	ganadas2 = 0;
+	turno = 1;
 	/* Configurar el puerto G (si no lo estuviese ya) */	
 		// Establece la funcion de los pines (EINT0-7)
 	//rPCONG = 0xFFFF3
@@ -59,11 +73,12 @@ void keyboard_init()
 	rINTCON = rINTCON | (1<<0);
 	/* Habilitar linea EINT1 */
 		//
-	rINTMSK = ~(BIT_EINT1 | BIT_GLOBAL);
+	rINTMSK = rINTMSK & ~(BIT_EINT1 | BIT_GLOBAL);
 
 	/* Por precaucion, se vuelven a borrar los bits de INTPND correspondientes*/
 		//
 	rI_ISPC = BIT_EINT1;
+	rTCON = rTCON | (0x01<<8);// iniciar timer1
 }
 void KeyboardInt(void)
 {
@@ -80,19 +95,21 @@ void KeyboardInt(void)
 		if(teclas_pulsadas[key] == 1)
 		{
 			//Pierdes mamón
-			DelayMs(10);
-			led1_on();
-			DelayMs(50);
+			jugadorPierde();
 
 		}
 		else
 		{
 			teclas_pulsadas[key] = 1;
-			DelayMs(10);
-			led2_on();
-			DelayMs(50);
+
+			if(turno == 1){
+				turno = 2;
+			}else{
+				turno = 1;
+			}
+			leds_switch();
 		}
-		leds_off();
+		pararTimer(1);
 
 	}
 	/* Esperar a se libere la tecla: consultar bit 1 del registro de datos del puerto G */
@@ -104,11 +121,13 @@ void KeyboardInt(void)
 	DelayMs(100);
 	/* Borrar interrupción de teclado */
 	//
-	rI_ISPC = ~0x0;
+	rI_ISPC = BIT_EINT1;
+
+	rTCON = rTCON | (0x01<<8);// iniciar timer1
 }
 int key_read()
 {
-	int value= -1;
+	int value = -1;
 	char temp;
 	// Identificar la tecla mediante ''scanning''
 
@@ -151,5 +170,39 @@ int key_read()
 	}
 	
 	return value;
+
+}
+
+void jugadorPierde(){
+
+	if(turno == 1){
+		ganadas2 += 1;
+		D8Led_symbol(ganadas2);
+	}else{
+		ganadas1 += 1;
+		D8Led_symbol(ganadas1);
+	}
+
+	int var;
+	for (var = 0; var < 16; ++var) {
+		teclas_pulsadas[var] = 0;
+	}
+
+	DelayMs(100);
+	leds_on();
+	DelayMs(10);
+	leds_off();
+	DelayMs(20);
+
+	switch(turno){
+	case 1:
+		led1_on();
+		turno = 1;
+		break;
+	case 2:
+		led2_on();
+		turno = 2;
+		break;
+	}
 
 }
