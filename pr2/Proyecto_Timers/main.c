@@ -3,11 +3,8 @@
 #include "44b.h"
 #include "stdio.h"
 /*--- funciones externas ---*/
-extern void leds_off();
-extern void led1_on();
 extern void leds_on();
 extern void timer_init();
-extern void keyboard_init();
 //Declarar funciones externas de inicialización
 
 /*--- declaracion de funciones ---*/

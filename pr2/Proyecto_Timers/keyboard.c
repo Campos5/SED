@@ -80,8 +80,7 @@ void keyboard_init()
 		//
 	rI_ISPC = BIT_EINT1;
 
-
-	rTCON = rTCON | (0x01<<8);// iniciar timer1
+	lanzarTimer(1);
 }
 
 

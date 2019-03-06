@@ -2,10 +2,8 @@
 #include "44b.h"
 #include "44blib.h"
 /*--- funciones externas ---*/
-extern void leds_switch();
 extern void leds_off();
 extern void led1_on();
-extern void led2_on();
 extern void D8Led_symbol(int value);
 extern void jugadorPierde();
 extern void keyboard_init();
@@ -52,11 +50,11 @@ void timer_init(void)
 
 	/* Configurar el Timer0 (el resto de los timers se dejan a la
 	configuración por defecto) */
-	rTCFG0 = 0xFF;// pre-escalado = 255
+	rTCFG0 = 0xFFFF;// pre-escalado = 255
 
 	rTCFG1 &= 0xFFFFF0;// divisor = 1/2 Timer0
 	rTCFG1 &= 0xFFFF0F;// divisor = 1/2 Timer1
-	rTCFG1 &= 0xFFF3FF;// divisor = 1/2 Timer2
+	rTCFG1 &= 0xFFF2FF;// divisor = 1/32 Timer2
 
 	rTCNTB0 = 65535;
 	rTCMPB0 = 12800;
@@ -67,21 +65,7 @@ void timer_init(void)
 	rTCNTB2 = 65535;
 	rTCMPB2 = 12800;
 
-	rTCON = rTCON | (0x01<<1);// establecer manual_update timer0
-	rTCON = rTCON | (0x01<<9);// establecer manual_update timer1
-	rTCON = rTCON | (0x01<<13);// establecer manual_update timer2
-
-	rTCON = rTCON & ~(0x01<<1);// DESACTIVA manual_update timer0
-	rTCON = rTCON & ~(0x01<<9);// DESACTIVA manual_update timer1
-	rTCON = rTCON | (0x01<<13);// establecer manual_update timer2
-
-
-	rTCON = rTCON | (0x01<<3);//activar modo auto-reload timer0
-	rTCON = rTCON | (0x01<<11);//activar modo auto-reload timer1
-	rTCON = rTCON | (0x01<<15);//activar modo auto-reload timer1
-
-	rTCON = rTCON | (0x01<<0);// iniciar timer0
-
+	lanzarTimer(0);
 
 }
 
@@ -123,7 +107,7 @@ void timer_ISR_2(void){
 
 	timer2 += 1;
 
-	if(timer2 == 60){
+	if(timer2 == 5){
 		pararTimer(2);
 		terminarPartida(1);
 	}
@@ -149,11 +133,11 @@ void lanzarTimer(int timer) {
 			rTCON = rTCON | (0x01<<8);// iniciar timer1
 			break;
 		case 2:
-			rINTMSK = rINTMSK & ~(BIT_TIMER2 | BIT_GLOBAL);// Enmascarar todas las lineas excepto Timer1 y el bit global
-			rTCON = rTCON | (0x01<<13);// establecer manual_update timer1
-			rTCON = rTCON & ~(0x01<<13);// DESACTIVA manual_update timer1
-			rTCON = rTCON | (0x01<<15);//activar modo auto-reload timer1
-			rTCON = rTCON | (0x01<<12);// iniciar timer1
+			rINTMSK = rINTMSK & ~(BIT_TIMER2 | BIT_GLOBAL);// Enmascarar todas las lineas excepto Timer2 y el bit global
+			rTCON = rTCON | (0x01<<13);// establecer manual_update timer2
+			rTCON = rTCON & ~(0x01<<13);// DESACTIVA manual_update timer2
+			rTCON = rTCON | (0x01<<15);//activar modo auto-reload timer2
+			rTCON = rTCON | (0x01<<12);// iniciar timer2
 			break;
 		}
 }

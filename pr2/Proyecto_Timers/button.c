@@ -11,8 +11,6 @@ void Eint4567_ISR(void) __attribute__ ((interrupt ("IRQ")));
 void Eint4567_init(void);
 void init_buttons();
 int pulsa();
-extern void leds_switch ();
-extern void D8Led_symbol(int value);
 extern void terminarPartida(int caso);
 
 /*--- codigo de funciones ---*/
@@ -84,11 +82,7 @@ void Eint4567_ISR(void)
 {
 	while(1){
 		if(pulsa() != 0){
-			DelayMs(10);
-
 			terminarPartida(0);
-
-			DelayMs(100);
 			break;
 		}
 	}
