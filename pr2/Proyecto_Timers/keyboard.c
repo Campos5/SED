@@ -8,13 +8,45 @@
 volatile UCHAR *keyboard_base = (UCHAR *)0x06000000;
 int key;
 /*--- Funciones externas ---*/
-void D8Led_symbol(int value);
+extern void D8Led_symbol(int value);
+extern void leds_on();
+extern void leds_off();
+extern void led1_on();
+extern void led2_on();
+extern void pararTimer(int timer);
+extern void lanzarTimer(int timer);
+
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
+void init();
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
+void jugadorPierde();
+void terminarPartida(int caso);
+
 /*--- Codigo de las funciones ---*/
+
+
+/*--- Variables Globales ---*/
+int teclas_pulsadas[16]; //Array que indica las teclas que están pulsadas. 1-Ya pulsada, 0-No
+int ganadas1;
+int ganadas2;
+int turno;
+
+void init()
+{
+
+	keyboard_init();
+}
+
 void keyboard_init()
 {
+	int var;
+	for (var = 0; var < 16; ++var) {
+		teclas_pulsadas[var] = 0;
+	}
+	ganadas1 = 0;
+	ganadas2 = 0;
+	turno = 1;
 	/* Configurar el puerto G (si no lo estuviese ya) */	
 		// Establece la funcion de los pines (EINT0-7)
 	//rPCONG = 0xFFFF3
@@ -33,7 +65,7 @@ void keyboard_init()
 	pISR_EINT1 = (unsigned)KeyboardInt;
 	/* Configurar controlador de interrupciones */
 		// Borra INTPND escribiendo 1s en I_ISPC
-	rI_ISPC = ~0x0;
+	rI_ISPC = BIT_EINT1;
 		// Configura las lineas como de tipo IRQ mediante INTMOD
 	rINTMOD = 0x0;
 		// Habilita int. vectorizadas y la linea IRQ (FIQ no) mediante INTCON
@@ -42,12 +74,16 @@ void keyboard_init()
 	rINTCON = rINTCON | (1<<0);
 	/* Habilitar linea EINT1 */
 		//
-	rINTMSK = ~(BIT_EINT1 | BIT_GLOBAL);
+	rINTMSK = rINTMSK & ~(BIT_EINT1 | BIT_GLOBAL);
 
 	/* Por precaucion, se vuelven a borrar los bits de INTPND correspondientes*/
 		//
-	rI_ISPC = ~0x0;
+	rI_ISPC = BIT_EINT1;
+
+	lanzarTimer(1);
 }
+
+
 void KeyboardInt(void)
 {
 	/* Esperar trp mediante la funcion DelayMs()*/
@@ -59,8 +95,25 @@ void KeyboardInt(void)
 	/* Si la tecla se ha identificado, visualizarla en el 8SEG*/
 	if(key > -1)
 	{
-		//
-		D8Led_symbol(key);
+
+		if(teclas_pulsadas[key] == 1)
+		{
+			//Pierdes mamón
+			jugadorPierde();
+
+		}
+		else
+		{
+			teclas_pulsadas[key] = 1;
+
+			if(turno == 1){
+				turno = 2;
+			}else{
+				turno = 1;
+			}
+			leds_switch();
+		}
+		pararTimer(1);
 
 	}
 	/* Esperar a se libere la tecla: consultar bit 1 del registro de datos del puerto G */
@@ -72,11 +125,14 @@ void KeyboardInt(void)
 	DelayMs(100);
 	/* Borrar interrupción de teclado */
 	//
-	rI_ISPC = ~0x0;
+	rI_ISPC = BIT_EINT1;
+
+	lanzarTimer(1);
+	//rTCON = rTCON | (0x01<<8);// iniciar timer1
 }
 int key_read()
 {
-	int value= -1;
+	int value = -1;
 	char temp;
 	// Identificar la tecla mediante ''scanning''
 
@@ -119,5 +175,70 @@ int key_read()
 	}
 	
 	return value;
+
+}
+
+void jugadorPierde(){
+
+	if(turno == 1){
+		ganadas2 += 1;
+		D8Led_symbol(2);
+	}else{
+		ganadas1 += 1;
+		D8Led_symbol(1);
+	}
+
+	int var;
+	for (var = 0; var < 16; ++var) {
+		teclas_pulsadas[var] = 0;
+	}
+
+	DelayMs(100);
+	leds_on();
+	DelayMs(1000);
+	leds_off();
+	DelayMs(20);
+
+	switch(turno){
+	case 1:
+		led1_on();
+		turno = 1;
+		break;
+	case 2:
+		led2_on();
+		turno = 2;
+		break;
+	}
+	lanzarTimer(1);
+
+}
+
+void terminarPartida(int caso)
+{
+	leds_off();
+	if (caso == 0){
+		pararTimer(1);
+		//led jugador pierde
+		//display partidas ganadas
+		if(ganadas1 < ganadas2)
+		{
+			led1_on();
+			D8Led_symbol(ganadas1);
+		}else{
+			led2_on();
+			D8Led_symbol(ganadas2);
+		}
+
+		lanzarTimer(2);
+	}else{
+		if(ganadas1 >= ganadas2)
+		{
+			led1_on();
+			D8Led_symbol(ganadas1);
+		}else{
+			led2_on();
+			D8Led_symbol(ganadas2);
+		}
+	}
 
 }
