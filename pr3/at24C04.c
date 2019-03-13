@@ -17,4 +17,3 @@ void at24c04_byteread( uint16 addr, uint8 *data )
 	iic_getByte_start(AT24C04_ADDRESS_READ);
 	*data = iic_getByte_stop( NO_RxACK ); 								// En una EEPROM, no debe generarse ACK tras el último dato recibido
 }
-
