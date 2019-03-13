@@ -14,6 +14,8 @@ extern "C" {
 
 #include "option.h"
 
+#define	LED8ADDR	(*(volatile unsigned char *)(0x2140000))
+
 /* System */
 #define rSYSCFG		(*(volatile unsigned *)0x1c00000)
 
