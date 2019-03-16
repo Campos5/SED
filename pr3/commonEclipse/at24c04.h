@@ -20,8 +20,10 @@
 
 #include "common_types.h"
 
-#define AT24C04_ADDRESS_READ (0xA1) // la dirección completa del dispositivo (8 bits) es: 0b101000 | PAGE | R/W
-#define AT24C04_ADDRESS_WRITE (0xA0)
+#define AT24C04_ADDRESS (0x28) // la dirección completa del dispositivo (8 bits) es: 0b101000 | PAGE | R/W
+
+#define AT24C04_READ  (1)
+#define AT24C04_WRITE (0)
 
 #define AT24C04_WIDTH (8)
 #define AT24C04_DEPTH (512)

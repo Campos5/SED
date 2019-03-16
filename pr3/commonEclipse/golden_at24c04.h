@@ -38,3 +38,4 @@ void golden_at24c04_byteread( uint16 addr, uint8 *data );
 
 #endif
 
+

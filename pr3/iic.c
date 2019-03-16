@@ -41,48 +41,76 @@ void iic_putByte_start( uint8 byte )
 	rIICDS = byte;
 
 	// Máster Tx, start condition, Tx/Rx habilitada
-	rIICSTAT = 0x1 << 7;
-	rIICSTAT = 0x1 << 6;
+	//11,1,1 -> 11110000
+	rIICSTAT = 0xF0;
 
 	// Comienza la transmisión (borrando pending bit del IICCON)
 	rIICCON = rIICCON & ~(0x1 << 4);
 
 	// Espera la recepción de ACK
-	//while(rIICCON(0x1 << 4)==0);
+	while((rIICCON & (0x1<<4))==0);
 
 }
 
 void iic_putByte( uint8 byte )
 {
     // Escribe el dato
+	rIICDS = byte;
+
 	// Comienza la transmisión del dato (borrando pending bit del IICCON)
+	rIICCON = rIICCON & ~(0x1 << 4);
+
     // Espera la recepción de ACK  
+	while((rIICCON & (0x1<<4))==0);
 };
 
 void iic_putByte_stop( uint8 byte )
 {
     // Escribe el dato
+	rIICDS = byte;
+
 	// Comienza la trasmisión del dato (borrando pending bit del IICCON)
+	rIICCON = rIICCON & ~(0x1 << 4);
+
     // Espera la recepción de ACK  
-    
+	while((rIICCON & (0x1<<4))==0);
+
     // Máster Tx, stop condition, Tx/Rx habilitada
+	//11,0,1 -> 11010000
+	rIICSTAT = 0xD0;
+
     // Comienza la trasmisión de STOP (borrando pending bit del IICCON)
+	rIICCON = rIICCON & ~(0x1 << 4);
+
     // Espera a que la stop condition tenga efecto (5 ms para la at24c04)
+	DelayMs(5);
 }
 
 
 void iic_getByte_start( uint8 byte )
 {
 	// Escribe el dato
+	rIICDS = byte;
+
     // Máster Rx, start condition, Tx/Rx habilitada
+	//11,1,1 -> 10110000
+	rIICSTAT = 0xB0;
+
     // Comienza la transmisión (borrando pending bit del IICCON)
+	rIICCON = rIICCON & ~(0x1 << 4);
+
     // Espera la rececpión de ACK
+	while((rIICCON & (0x1<<4))==0);
+
 }
 
 uint8 iic_getByte( void )
 {
     // Reanuda la recepción (borrando pending bit del IICCON)
+	rIICCON = rIICCON & ~(0x1 << 4);
 	// Espera la recepción del dato
+	while((rIICCON & (0x1<<4))==0);
+
     return IICDS;// Lee el dato
 }
 
@@ -93,12 +121,22 @@ uint8 iic_getByte_stop( int8 ack )
     IICCON = (IICCON & ~(1 << 7)) | (ack << 7); // Habilita/deshabilita la generación de ACK
 
     // Reanuda la recepción (borrando pending bit del IICCON)
+    rIICCON = rIICCON & ~(0x1 << 4);
+
 	// Espera la recepción del dato
+    while((rIICCON & (0x1<<4))==0);
+
     byte = IICDS;	// Lee el dato
 
    	// Máster Rx, stop condition, Tx/Rx habilitada
+    //11,0,1 -> 10010000
+	rIICSTAT = 0x90;
+
    	// Comienza la trasmisión de STOP (borrando pending bit del IICCON)
+	rIICCON = rIICCON & ~(0x1 << 4);
+
    	// Espera a que la stop condition tenga efecto (5 ms para la at24c04)
+	DelayMs(5);
 
 	IICCON |= (1<<7); // Habilita la generación de ACK
    	return byte;

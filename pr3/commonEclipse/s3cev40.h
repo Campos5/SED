@@ -98,4 +98,5 @@
 #define BIT_IDE_INTRQ (1<<1)
 #define BIT_IDE_DMACK (1<<0)
 
-#endif 
+#endif
+
