@@ -16,8 +16,9 @@ extern void D8Led_symbol(int value);
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
 int key_read();
-uint16 get_dir();
-uint8 get_data();
+extern uint16 dir;
+extern uint8 data;
+extern int state;
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
 
 extern void DelayMs(int ms_time);
@@ -25,19 +26,8 @@ extern void at24c04_bytewrite( uint16 addr, uint8 data );
 extern void at24c04_byteread( uint16 addr, uint8 *data );
 
 extern int get_state();
+
 /*--- Codigo de las funciones ---*/
-uint16 get_dir(){
-	return dir;
-}
-
-
-uint8 get_data(){
-	return data;
-}
-
-
-
-
 void keyboard_init()
 {
 
@@ -76,7 +66,6 @@ void keyboard_init()
 
 }
 
-
 void KeyboardInt(void)
 {
 	/* Esperar trp mediante la funcion DelayMs()*/
@@ -89,27 +78,26 @@ void KeyboardInt(void)
 	if(key > -1)
 	{
 
-		switch(get_state()) {
+		switch(state) {
 
 			case 1:
-				dir = key << (0x04);
-
+				dir = dir | key << (0x04);
 				break;
+
 			case 2:
-				dir = key >> (0x04);
-
+				dir = dir | key;
 				break;
+
 			case 3:
-
-
+				data = data | key << (0x04);
 				break;
+
 			case 4:
-
-
+				data = data | key;
 				break;
+
 			case 5:
 				at24c04_bytewrite(dir, data);
-
 				break;
 		}
 		D8Led_symbol(key);
@@ -128,6 +116,7 @@ void KeyboardInt(void)
 
 	//rTCON = rTCON | (0x01<<8);// iniciar timer1
 }
+
 int key_read()
 {
 	int value = -1;

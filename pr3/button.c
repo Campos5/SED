@@ -10,20 +10,14 @@ int which_int;
 /*--- declaracion de funciones ---*/
 void Eint4567_ISR(void) __attribute__ ((interrupt ("IRQ")));
 void Eint4567_init(void);
-int get_state();
+extern uint16 dir;
+extern uint8 data;
 
 extern void D8Led_symbol(int value);
 extern void DelayMs(int ms_time);
 
-extern uint16 get_dir();
-extern uint8 get_data();
-
 void init_buttons();
 int pulsa();
-
-int get_state() {
-	return state;
-}
 
 /*--- codigo de funciones ---*/
 void Eint4567_init(void)
@@ -79,7 +73,6 @@ void init_buttons(){
 	rPCONG = rPCONG & ~(0x01<<15);
 }
 
-
 int pulsa(){
 	int pulsado = rPDATG & (0x40);
 	if(pulsado != 0){
@@ -87,34 +80,6 @@ int pulsa(){
 	}
 	return pulsado; //0-pulsado
 }
-
-/*COMENTAR PARA LA PARTE DEL 8-SEGMENTOS
-DESCOMENTAR PARA LA PRIMERA PARTE CON INTERRUPCIONES
-
-void Eint4567_ISR(void)
-{
-	symbol = 1;
-	while(1){
-		if(pulsa() != 0){
-			D8Led_symbol(symbol);
-			break;
-		}
-	}
-
-
-	//Atendemos interrupciones
-	//Borramos EXTINTPND ambas l�neas EINT7 y EINT6
-	rEXTINTPND = 0xC;
-
-	//Borramos INTPND usando ISPC
-	rI_ISPC = BIT_EINT4567;
-
-}*/
-
-/*
-DESCOMENTAR PARA LA PARTE DEL 8-SEGMENTOS
-COMENTAR PARA LA PRIMERA PARTE CON INTERRUPCIONES*/
-//int which_int;
 
 void Eint4567_ISR(void)
 {
@@ -136,15 +101,13 @@ void Eint4567_ISR(void)
 			break;
 
 		case 0x08: //derecho
-			D8Led_symbol(9);
+			at24c04_byteread(dir, &data);
 			break;
 
 
 		default:   //never
 			break;
 	}
-	// muestra el simbolo en el display
-
 
 	// espera 100ms para evitar rebotes
 	DelayMs(100);

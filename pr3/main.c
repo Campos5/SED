@@ -24,7 +24,8 @@ void Main( void )
 {
     uint8 buffer[AT24C04_DEPTH];
     uint16 i;
-
+    dir = 0;
+    data = 0;
     sys_init();
     iic_init();
     Eint4567_init();
