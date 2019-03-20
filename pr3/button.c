@@ -5,6 +5,7 @@
 /*--- variables globales ---*/
 int state;
 int which_int;
+int val;
 /*--- funciones externas ---*/
 //extern void D8Led_Symbol(int value);
 /*--- declaracion de funciones ---*/
@@ -102,6 +103,12 @@ void Eint4567_ISR(void)
 
 		case 0x08: //derecho
 			at24c04_byteread(dir, &data);
+
+			val = data & 0xF;
+			D8Led_symbol(val);
+			DelayMs(100);
+			val =  val << (0x04) & 0xF;
+			D8Led_symbol(val);
 			break;
 
 
