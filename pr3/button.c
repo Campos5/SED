@@ -5,7 +5,8 @@
 /*--- variables globales ---*/
 int state;
 int which_int;
-int val;
+int val1;
+int val2;
 /*--- funciones externas ---*/
 //extern void D8Led_Symbol(int value);
 /*--- declaracion de funciones ---*/
@@ -90,12 +91,10 @@ void Eint4567_ISR(void)
 	/* Actualizar simbolo*/
 	switch (which_int) {
 		case 0x04: //izquierdo
-			if(state == 6){
-				state = 0;
-			}else{
-				state += 1;
+			state = (state + 1) % 6;
+			if(state == 5){
+				at24c04_bytewrite(dir, data);
 			}
-
 			while(pulsa() == 0);
 
 			D8Led_symbol(state);
@@ -104,11 +103,11 @@ void Eint4567_ISR(void)
 		case 0x08: //derecho
 			at24c04_byteread(dir, &data);
 
-			val = data & 0xF;
-			D8Led_symbol(val);
-			DelayMs(100);
-			val =  val << (0x04) & 0xF;
-			D8Led_symbol(val);
+			val2 = data & 0x0F;
+			val1 =  (data & 0xF0) >> (0x04) ;
+			D8Led_symbol(val1);
+			DelayMs(1000);
+			D8Led_symbol(val2);
 			break;
 
 

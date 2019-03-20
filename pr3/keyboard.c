@@ -81,7 +81,7 @@ void KeyboardInt(void)
 		switch(state) {
 
 			case 1:
-				dir = dir | key << (0x04);
+				dir = key << (0x04);
 				break;
 
 			case 2:
@@ -89,15 +89,11 @@ void KeyboardInt(void)
 				break;
 
 			case 3:
-				data = data | key << (0x04);
+				data = key << (0x04);
 				break;
 
 			case 4:
 				data = data | key;
-				break;
-
-			case 5:
-				at24c04_bytewrite(dir, data);
 				break;
 		}
 		D8Led_symbol(key);
