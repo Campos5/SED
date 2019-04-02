@@ -61,8 +61,13 @@ char Uart_Getch(void)
 {
 	
 	//Esperar mientras que los punteros de lectura y escritura sean iguales
+	while(keyBufRdPt == keyBufWrPt);
+
 	//Almacenar en data1 el valor apuntado por el puntero de lectura
+	data1 = keyBuf[keyBufRdPt];
+
 	//Mover el puntero de lectura a la siguiente posición del buffer
+	keyBufRdPt = siguiente(keyBufRdPt);
 	
 	return data1;
 
@@ -83,8 +88,11 @@ void Uart_SendByte(int data)
 void Uart_SendString(char *pt)
 {
 	//Actualizar uart0TxStr para que apunte al comienzo del string que queremos enviar
+
 	//Desenmascarar la línea de interrupción INT_UTXD0.
+
 	//Esperar a que Uart0_TxInt() haya recorrido todo el buffer.
+	Uart_TxEmpty();
 }
 
 void Uart_Printf(char *fmt,...)
@@ -104,7 +112,7 @@ void Uart0_RxInt(){
 		//Leer el dato de la UART con la macro y asignárselo a data2
 		data2 = RdURXH0();
 		//Almacenar data2 en el buffer
-		keyBuf[keyBufWrPt];
+		keyBuf[keyBufWrPt] = data2;
 		//Actualizar el puntero de escritura del buffer
 		keyBufWrPt = keyBufWrPt_new;
 	}
@@ -118,7 +126,10 @@ void Uart0_RxInt(){
 void Uart0_TxInt(){
 
 	//Escribir el carácter correspondiente del buffer de envío en la UART a través de la macro
+	WrUTXH0(keyBuf[keyBufWrPt]);
+
 	//Actualizar el puntero al buffer de envío
+	keyBufWrPt = siguiente(keyBufWrPt);
 	
 	if(*uart0TxStr=='\0')
 		//Enmascarar linea INT_UTXD0
