@@ -36,16 +36,19 @@ void Uart_Init(int baud)
 
 void Uart_Config(void)
 {
-	/* Configure las ISRs de envío y recepción */
+	/* Configure las ISRs de envÃ­o y recepciÃ³n */
 	//
 	//
-	
-	/* Inicialice el estado del buffer de recepción 
+	INTPND |= (0x1 << 3) | (0x1 << 7);
+	/* Inicialice el estado del buffer de recepciÃ³n 
 	//(establece los punteros de lectura y escritura al comienzo de este) */
 	//
 	//
-	
-	/* Borrar interrupciones y configurar la línea INT_URXD0 como IRQ y desenmascararla */ 
+	int i;
+	for (i = 0; i < KEY_BUFLEN; ++i) {
+		keyBuf[i] = '';	
+	}
+	/* Borrar interrupciones y configurar la lÃ­nea INT_URXD0 como IRQ y desenmascararla */ 
 	//
 	//
 	//
@@ -66,7 +69,7 @@ char Uart_Getch(void)
 	//Almacenar en data1 el valor apuntado por el puntero de lectura
 	data1 = keyBuf[keyBufRdPt];
 
-	//Mover el puntero de lectura a la siguiente posición del buffer
+	//Mover el puntero de lectura a la siguiente posiciÃ³n del buffer
 	keyBufRdPt = siguiente(keyBufRdPt);
 	
 	return data1;
@@ -89,7 +92,7 @@ void Uart_SendString(char *pt)
 {
 	//Actualizar uart0TxStr para que apunte al comienzo del string que queremos enviar
 
-	//Desenmascarar la línea de interrupción INT_UTXD0.
+	//Desenmascarar la lÃ­nea de interrupciÃ³n INT_UTXD0.
 
 	//Esperar a que Uart0_TxInt() haya recorrido todo el buffer.
 	Uart_TxEmpty();
@@ -109,7 +112,7 @@ void Uart0_RxInt(){
 
 	keyBufWrPt_new = siguiente(keyBufWrPt);
 	if(keyBufWrPt < KEY_BUFLEN && keyBufRdPt!=keyBufWrPt_new){
-		//Leer el dato de la UART con la macro y asignárselo a data2
+		//Leer el dato de la UART con la macro y asignÃ¡rselo a data2
 		data2 = RdURXH0();
 		//Almacenar data2 en el buffer
 		keyBuf[keyBufWrPt] = data2;
@@ -119,22 +122,22 @@ void Uart0_RxInt(){
 	else{
 		Uart_Printf(str_error2);
 	}
-	//Borrar interrupción pendiente
+	//Borrar interrupciÃ³n pendiente
 	//TODO
 }
 
 void Uart0_TxInt(){
 
-	//Escribir el carácter correspondiente del buffer de envío en la UART a través de la macro
+	//Escribir el carÃ¡cter correspondiente del buffer de envÃ­o en la UART a travÃ©s de la macro
 	WrUTXH0(keyBuf[keyBufWrPt]);
 
-	//Actualizar el puntero al buffer de envío
+	//Actualizar el puntero al buffer de envÃ­o
 	keyBufWrPt = siguiente(keyBufWrPt);
 	
 	if(*uart0TxStr=='\0')
 		//Enmascarar linea INT_UTXD0
 	
-	//Borrar interrupción pendiente
+	//Borrar interrupciÃ³n pendiente
 
 }
 
