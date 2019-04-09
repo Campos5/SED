@@ -1,0 +1,186 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 18, 4
+  11              		.file	"main.c"
+  21              	.Ltext0:
+  22              		.file 1 "../main.c"
+ 2653              		.align	2
+ 2656              	str_send:
+ 2657 0000 0A534544 		.ascii	"\012SED-P4 >\000"
+ 2657      2D503420 
+ 2657      3E00
+ 2658              		.global	str_error
+ 2659 000a 0000     		.align	2
+ 2662              	str_error:
+ 2663 000c 0A536520 		.ascii	"\012Se ha producido un desbordamiento!\012\000\000"
+ 2663      68612070 
+ 2663      726F6475 
+ 2663      6369646F 
+ 2663      20756E20 
+ 2664 0032 00000000 		.space	12
+ 2664      00000000 
+ 2664      00000000 
+ 2665              		.comm	str,256,4
+ 2666 003e 0000     		.section	.rodata
+ 2667              		.align	2
+ 2668              	.LC0:
+ 2669 0000 00       		.ascii	"\000"
+ 2670 0001 000000   		.align	2
+ 2671              	.LC1:
+ 2672 0004 4F555442 		.ascii	"OUTBOX\000"
+ 2672      4F5800
+ 2673 000b 00       		.align	2
+ 2674              	.LC2:
+ 2675 000c 494E424F 		.ascii	"INBOX\000"
+ 2675      5800
+ 2676 0012 0000     		.text
+ 2677              		.align	2
+ 2678              		.global	Main
+ 2680              	Main:
+ 2681              	.LFB0:
+   1:../main.c     **** /*--- ficheros de cabecera ---*/
+   2:../main.c     **** #include "44blib.h"
+   3:../main.c     **** #include "44b.h"
+   4:../main.c     **** #include "uart.h"
+   5:../main.c     **** #include "lcd.h"
+   6:../main.c     **** /*--- declaracion de funciones ---*/
+   7:../main.c     **** int Main(void);
+   8:../main.c     **** 
+   9:../main.c     **** /*--- variables globales ---*/
+  10:../main.c     **** char str_send[10] = "\nSED-P4 >\0";
+  11:../main.c     **** char str_error[50] = "\nSe ha producido un desbordamiento!\n\0";
+  12:../main.c     **** char str[256];
+  13:../main.c     **** 
+  14:../main.c     **** /*--- codigo de la funcion ---*/
+  15:../main.c     **** int Main(void){
+ 2682              		.loc 1 15 0
+ 2683              		.cfi_startproc
+ 2684              		@ Function supports interworking.
+ 2685              		@ args = 0, pretend = 0, frame = 72
+ 2686              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2687 0000 0DC0A0E1 		mov	ip, sp
+ 2688              	.LCFI0:
+ 2689              		.cfi_def_cfa_register 12
+ 2690 0004 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 2691 0008 04B04CE2 		sub	fp, ip, #4
+ 2692              		.cfi_offset 14, -8
+ 2693              		.cfi_offset 13, -12
+ 2694              		.cfi_offset 11, -16
+ 2695              	.LCFI1:
+ 2696              		.cfi_def_cfa 11, 4
+ 2697 000c 50D04DE2 		sub	sp, sp, #80
+  16:../main.c     **** 
+  17:../main.c     **** 
+  18:../main.c     **** 	sys_init(); // inicializacion de la placa, interrupciones, puertos
+ 2698              		.loc 1 18 0
+ 2699 0010 FEFFFFEB 		bl	sys_init
+  19:../main.c     **** 	Eint4567_init(); // inicializacion de los botones
+ 2700              		.loc 1 19 0
+ 2701 0014 FEFFFFEB 		bl	Eint4567_init
+  20:../main.c     **** 	lcd_init();
+ 2702              		.loc 1 20 0
+ 2703 0018 FEFFFFEB 		bl	lcd_init
+  21:../main.c     **** 	keyboard_init();
+ 2704              		.loc 1 21 0
+ 2705 001c FEFFFFEB 		bl	keyboard_init
+  22:../main.c     **** 	Uart_Init(115200); // inicializacion de la Uart
+ 2706              		.loc 1 22 0
+ 2707 0020 74009FE5 		ldr	r0, .L2
+ 2708 0024 FEFFFFEB 		bl	Uart_Init
+  23:../main.c     **** 	Uart_Config(); // configuración de interrupciones y buffers
+ 2709              		.loc 1 23 0
+ 2710 0028 FEFFFFEB 		bl	Uart_Config
+  24:../main.c     **** 
+  25:../main.c     **** 	// Por ahora este main espera que le llegue un entero por el serie
+  26:../main.c     **** 	// y cuando le llega hace un led switch
+  27:../main.c     **** 
+  28:../main.c     **** 	D8Led_symbol(0);
+ 2711              		.loc 1 28 0
+ 2712 002c 0000A0E3 		mov	r0, #0
+ 2713 0030 FEFFFFEB 		bl	D8Led_symbol
+  29:../main.c     **** 
+  30:../main.c     **** 	char* mensajeRecibido = "";
+ 2714              		.loc 1 30 0
+ 2715 0034 64309FE5 		ldr	r3, .L2+4
+ 2716 0038 10300BE5 		str	r3, [fp, #-16]
+  31:../main.c     **** 	char c[60];
+  32:../main.c     **** 	int numeroLeido = 0;
+ 2717              		.loc 1 32 0
+ 2718 003c 0030A0E3 		mov	r3, #0
+ 2719 0040 14300BE5 		str	r3, [fp, #-20]
+  33:../main.c     **** 
+  34:../main.c     **** 	lcd_on();
+ 2720              		.loc 1 34 0
+ 2721 0044 FEFFFFEB 		bl	lcd_on
+  35:../main.c     **** 
+  36:../main.c     **** 	lcd_draw_vline( 240, 0, 150, BLACK, 4);
+ 2722              		.loc 1 36 0
+ 2723 0048 0430A0E3 		mov	r3, #4
+ 2724 004c 00308DE5 		str	r3, [sp, #0]
+ 2725 0050 F000A0E3 		mov	r0, #240
+ 2726 0054 0010A0E3 		mov	r1, #0
+ 2727 0058 9620A0E3 		mov	r2, #150
+ 2728 005c 0F30A0E3 		mov	r3, #15
+ 2729 0060 FEFFFFEB 		bl	lcd_draw_vline
+  37:../main.c     **** 
+  38:../main.c     **** 	lcd_printf(40, 16, BLACK, "OUTBOX");
+ 2730              		.loc 1 38 0
+ 2731 0064 2800A0E3 		mov	r0, #40
+ 2732 0068 1010A0E3 		mov	r1, #16
+ 2733 006c 0F20A0E3 		mov	r2, #15
+ 2734 0070 2C309FE5 		ldr	r3, .L2+8
+ 2735 0074 FEFFFFEB 		bl	lcd_printf
+  39:../main.c     **** 
+  40:../main.c     **** 	lcd_printf(210, 16, BLACK, "INBOX");
+ 2736              		.loc 1 40 0
+ 2737 0078 D200A0E3 		mov	r0, #210
+ 2738 007c 1010A0E3 		mov	r1, #16
+ 2739 0080 0F20A0E3 		mov	r2, #15
+ 2740 0084 1C309FE5 		ldr	r3, .L2+12
+ 2741 0088 FEFFFFEB 		bl	lcd_printf
+  41:../main.c     **** }
+ 2742              		.loc 1 41 0
+ 2743 008c 0300A0E1 		mov	r0, r3
+ 2744 0090 0CD04BE2 		sub	sp, fp, #12
+ 2745 0094 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2746 0098 1EFF2FE1 		bx	lr
+ 2747              	.L3:
+ 2748              		.align	2
+ 2749              	.L2:
+ 2750 009c 00C20100 		.word	115200
+ 2751 00a0 00000000 		.word	.LC0
+ 2752 00a4 04000000 		.word	.LC1
+ 2753 00a8 0C000000 		.word	.LC2
+ 2754              		.cfi_endproc
+ 2755              	.LFE0:
+ 2757              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\USUARI~1\AppData\Local\Temp\cc44gWPV.s:2656   .data:00000000 str_send
+C:\Users\USUARI~1\AppData\Local\Temp\cc44gWPV.s:2653   .data:00000000 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cc44gWPV.s:2662   .data:0000000c str_error
+                            *COM*:00000100 str
+C:\Users\USUARI~1\AppData\Local\Temp\cc44gWPV.s:2667   .rodata:00000000 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cc44gWPV.s:2677   .text:00000000 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cc44gWPV.s:2680   .text:00000000 Main
+C:\Users\USUARI~1\AppData\Local\Temp\cc44gWPV.s:2750   .text:0000009c $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+sys_init
+Eint4567_init
+lcd_init
+keyboard_init
+Uart_Init
+Uart_Config
+D8Led_symbol
+lcd_on
+lcd_draw_vline
+lcd_printf
