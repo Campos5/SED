@@ -1,8 +1,12 @@
 #include "Visualizar.h"
+#include "44b.h"
+#include "def.h"
 
 
-extern struct pos_racman_propio;
-extern struct pos_racman_rival;
+extern int pos_racman_propio_x;
+extern int pos_racman_propio_y;
+
+extern int jugador;
 
 int mapa[(240/16)][(320/16)] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -183,8 +187,8 @@ void dibujar_mapa(void){
 
 			if(mapa[j][i] == 3){
 				dibujar_racman(i, j, 0);
-				pos_racman_propio.x = i;
-				pos_racman_propio.y = j;
+				pos_racman_propio_x = i;
+				pos_racman_propio_y = j;
 			}
 		}
 	}

@@ -5,32 +5,27 @@
 #include "Visualizar.h"
 #include "lcd.h"
 
-
-struct Posicion {
-	int x;
-	int y;
-};
-
-
-
-struct Posicion pos_racman_propio;
-struct Posicion pos_racman_rival;
+int pos_racman_propio_x;
+int pos_racman_propio_y;
 
 int jugador;
 
 /*--- declaracion de funciones ---*/
-int Main(void);
+void Main(void);
 
 
 /*--- codigo de la funcion ---*/
-int Main(void){
+void Main(void){
 
 	sys_init(); // inicializacion de la placa, interrupciones, puertos
 	//Eint4567_init(); // inicializacion de los botones
+
+	keyboard_init();
+
 	init_visualizacion();
 	dibujar_mapa();
 
-	//keyboard_init();
+	while(1);
 	//Uart_Init(115200); // inicializacion de la Uart
 	//Uart_Config(); // configuración de interrupciones y buffers
 
@@ -50,5 +45,4 @@ int Main(void){
 	lcd_printf(40, 16, BLACK, "OUTBOX");
 
 	lcd_printf(210, 16, BLACK, "INBOX");*/
-	return 0;
 }

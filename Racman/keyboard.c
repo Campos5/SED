@@ -1,36 +1,29 @@
 /*--- Ficheros de cabecera ---*/
 #include "44b.h"
+#include "44blib.h"
 #include "def.h"
 /*--- Definición de macros ---*/
 #define KEY_VALUE_MASK 0xF
 /*--- Variables globales ---*/
 volatile UCHAR *keyboard_base = (UCHAR *)0x06000000;
-int value;
-
-
+int key;
 /*--- Funciones externas ---*/
-extern void D8Led_symbol(int value);
+void D8Led_symbol(int value);
 
-extern struct pos_racman_propio;
-extern struct pos_racman_rival;
+extern int mapa[(240/16)][(320/16)];
+
+extern int pos_racman_propio_x;
+extern int pos_racman_propio_y;
 
 extern int jugador;
 
+
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
-int key_read();
-
-extern int state;
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
-
-extern void DelayMs(int ms_time);
-
-extern int get_state();
-
 /*--- Codigo de las funciones ---*/
 void keyboard_init()
 {
-
 	/* Configurar el puerto G (si no lo estuviese ya) */	
 		// Establece la funcion de los pines (EINT0-7)
 	//rPCONG = 0xFFFF3
@@ -49,7 +42,7 @@ void keyboard_init()
 	pISR_EINT1 = (unsigned)KeyboardInt;
 	/* Configurar controlador de interrupciones */
 		// Borra INTPND escribiendo 1s en I_ISPC
-	rI_ISPC = BIT_EINT1;
+	rI_ISPC = ~0x0;
 		// Configura las lineas como de tipo IRQ mediante INTMOD
 	rINTMOD = 0x0;
 		// Habilita int. vectorizadas y la linea IRQ (FIQ no) mediante INTCON
@@ -58,42 +51,93 @@ void keyboard_init()
 	rINTCON = rINTCON | (1<<0);
 	/* Habilitar linea EINT1 */
 		//
-	rINTMSK = rINTMSK & ~(BIT_EINT1 | BIT_GLOBAL);
+	rINTMSK = ~(BIT_EINT1 | BIT_GLOBAL);
 
 	/* Por precaucion, se vuelven a borrar los bits de INTPND correspondientes*/
 		//
-	rI_ISPC = BIT_EINT1;
-
+	rI_ISPC = ~0x0;
 }
-
 void KeyboardInt(void)
 {
+	/* Esperar trp mediante la funcion DelayMs()*/
+	//
+	DelayMs(20);
+	/* Identificar la tecla */
+	key = key_read();
+	//
+	/* Si la tecla se ha identificado, visualizarla en el 8SEG*/
+	if(key > -1)
+	{
+		//
+		D8Led_symbol(key);
 
+	}
 	/* Esperar a se libere la tecla: consultar bit 1 del registro de datos del puerto G */
 	while ( (rPDATG & (1 << 1) ) == 0){
 		//NOTHING
 	}
 
-	switch (value){
+	switch (key){
 		case 1: //mover arriba
+			// comprobar si es legal el movimiento
+			if(pos_racman_propio_y - 1 <= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0){
+
+				//limpiar la casilla donde se encuentra racman
+				limpiar_pixels(pos_racman_propio_y, pos_racman_propio_x);
+
+				//poner a racman en la nueva posicion
+				dibujar_racman(pos_racman_propio_y -1, pos_racman_propio_x, 0);
+
+			}
 			break;
 
 		case 2: //mover arriba
+
 			break;
 
 		case 4: //mover izquierda
+			// comprobar si es legal el movimiento
+			if(pos_racman_propio_x - 1 <= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != 0){
+
+				//limpiar la casilla donde se encuentra racman
+				limpiar_pixels(pos_racman_propio_y, pos_racman_propio_x);
+
+				//poner a racman en la nueva posicion
+				dibujar_racman(pos_racman_propio_y, pos_racman_propio_x - 1, 0);
+
+			}
 			break;
 
 		case 8: //mover izquierda
 			break;
 
 		case 7: //mover derecha
+			// comprobar si es legal el movimiento
+			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0){
+
+				//limpiar la casilla donde se encuentra racman
+				limpiar_pixels(pos_racman_propio_y, pos_racman_propio_x);
+
+				//poner a racman en la nueva posicion
+				dibujar_racman(pos_racman_propio_y, pos_racman_propio_x + 1, 0);
+
+			}
 			break;
 
 		case 11: //mover derecha
 			break;
 
 		case 13: //mover abajo
+			// comprobar si es legal el movimiento
+			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0){
+
+				//limpiar la casilla donde se encuentra racman
+				limpiar_pixels(pos_racman_propio_y, pos_racman_propio_x);
+
+				//poner a racman en la nueva posicion
+				dibujar_racman(pos_racman_propio_y + 1, pos_racman_propio_x, 0);
+
+			}
 			break;
 
 		case 14: //mover abajo
@@ -105,19 +149,18 @@ void KeyboardInt(void)
 	}
 
 
+
+
 	/* Esperar trd mediante la funcion Delay() */
 	//
 	DelayMs(100);
 	/* Borrar interrupción de teclado */
 	//
-	rI_ISPC = BIT_EINT1;
-
-	//rTCON = rTCON | (0x01<<8);// iniciar timer1
+	rI_ISPC = ~0x0;
 }
-
 int key_read()
 {
-	int value = -1;
+	int value= -1;
 	char temp;
 	// Identificar la tecla mediante ''scanning''
 
@@ -162,4 +205,3 @@ int key_read()
 	return value;
 
 }
-
