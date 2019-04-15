@@ -44,7 +44,7 @@ all: Racman.elf secondary-outputs
 Racman.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Sourcery Windows GCC C Linker'
-	arm-none-eabi-gcc -T"C:\Users\Campos\Desktop\SED\SED\project\commonUart\ram_ice.ld" -nostartfiles -L"C:\Users\Campos\Desktop\EclipseARM\sourcery-g++-lite-arm-2011.03\lib\gcc\arm-none-eabi\4.5.2" -L"C:\Users\Campos\Desktop\EclipseARM\sourcery-g++-lite-arm-2011.03\arm-none-eabi\lib" -L"C:\Users\Campos\Desktop\workspace\Racman\commonUart" -Wl,-Map,Racman.map -mcpu=arm7tdmi -g3 -gdwarf-2 -o "Racman.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -T"C:\Users\Campos\Desktop\SED\SED\Racman\commonUart\ram_ice.ld" -nostartfiles -L"C:\Users\Campos\Desktop\EclipseARM\sourcery-g++-lite-arm-2011.03\lib\gcc\arm-none-eabi\4.5.2" -L"C:\Users\Campos\Desktop\EclipseARM\sourcery-g++-lite-arm-2011.03\arm-none-eabi\lib" -L"C:\Users\Campos\Desktop\SED\SED\Racman\commonUart" -Wl,-Map,Racman.map -mcpu=arm7tdmi -g3 -gdwarf-2 -o "Racman.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

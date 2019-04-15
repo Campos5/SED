@@ -5,11 +5,16 @@
 #define KEY_VALUE_MASK 0xF
 /*--- Variables globales ---*/
 volatile UCHAR *keyboard_base = (UCHAR *)0x06000000;
-int key;
+int value;
 
 
 /*--- Funciones externas ---*/
 extern void D8Led_symbol(int value);
+
+extern struct pos_racman_propio;
+extern struct pos_racman_rival;
+
+extern int jugador;
 
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
@@ -68,6 +73,38 @@ void KeyboardInt(void)
 	while ( (rPDATG & (1 << 1) ) == 0){
 		//NOTHING
 	}
+
+	switch (value){
+		case 1: //mover arriba
+			break;
+
+		case 2: //mover arriba
+			break;
+
+		case 4: //mover izquierda
+			break;
+
+		case 8: //mover izquierda
+			break;
+
+		case 7: //mover derecha
+			break;
+
+		case 11: //mover derecha
+			break;
+
+		case 13: //mover abajo
+			break;
+
+		case 14: //mover abajo
+			break;
+
+		default: //eres un inútil que no sabe apretar los botones
+			break;
+
+	}
+
+
 	/* Esperar trd mediante la funcion Delay() */
 	//
 	DelayMs(100);

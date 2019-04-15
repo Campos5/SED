@@ -6,6 +6,17 @@
 #include "lcd.h"
 
 
+struct Posicion {
+	int x;
+	int y;
+};
+
+
+
+struct Posicion pos_racman_propio;
+struct Posicion pos_racman_rival;
+
+int jugador;
 
 /*--- declaracion de funciones ---*/
 int Main(void);
@@ -13,7 +24,6 @@ int Main(void);
 
 /*--- codigo de la funcion ---*/
 int Main(void){
-
 
 	sys_init(); // inicializacion de la placa, interrupciones, puertos
 	//Eint4567_init(); // inicializacion de los botones

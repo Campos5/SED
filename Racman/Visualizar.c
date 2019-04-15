@@ -1,5 +1,9 @@
 #include "Visualizar.h"
 
+
+extern struct pos_racman_propio;
+extern struct pos_racman_rival;
+
 int mapa[(240/16)][(320/16)] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
@@ -168,15 +172,23 @@ void mensaje_bienvenida(void){
 
 void dibujar_mapa(void){
 	int i, j;
-	for (i = 0; i<320/16; i++)
+
+	for (i = 0; i<320/16; i++){
+
 		for (j = 0; j<240/16; j++){
 
-			if(mapa[j][i] == 0)
+			if(mapa[j][i] == 0){
 				poner_muro(i, j);
+			}
 
-			if(mapa[j][i] == 3)
+			if(mapa[j][i] == 3){
 				dibujar_racman(i, j, 0);
+				pos_racman_propio.x = i;
+				pos_racman_propio.y = j;
+			}
 		}
+	}
+
 }
 
 
