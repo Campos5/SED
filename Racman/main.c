@@ -10,6 +10,10 @@ int pos_racman_propio_y;
 
 int jugador;
 
+extern void Eint4567_init();
+extern void keyboard_init();
+extern void timer_init();
+
 /*--- declaracion de funciones ---*/
 void Main(void);
 
@@ -18,12 +22,16 @@ void Main(void);
 void Main(void){
 
 	sys_init(); // inicializacion de la placa, interrupciones, puertos
-	//Eint4567_init(); // inicializacion de los botones
 
+	Eint4567_init(); // inicializacion de los botones
 	keyboard_init();
+	timer_init();
 
 	init_visualizacion();
+
 	dibujar_mapa();
+
+	lanzarTimer(0);
 
 	while(1);
 	//Uart_Init(115200); // inicializacion de la Uart

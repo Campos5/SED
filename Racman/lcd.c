@@ -326,20 +326,26 @@ void lcd_putpixel( uint16 x, uint16 y, uint8 color){
 
 void lcd_clear16x16(uint16 x, uint16 y){
 	uint16 i, j, k;
+
 	i = x/2 + y*(320/2);
 	if (x%2 == 0){
-		for (j=0; j<16; j++){
-			for(k=0; k<8; k++){
-				buffer[i+k] = 0;
+
+		for (j=0; j < 16; j++){
+			for(k=0; k < 8; k++){
+
+				buffer[i+k] = 0x00;
 			}
 			i += 320/2;
 		}
 	}else{
-		for (j=0; j<16; j++){
+		for (j=0; j < 16; j++){
+
 			buffer[i] &= 0xF0;
-			for(k=1; k<8; k++){
+
+			for(k=1; k < 8; k++){
 				buffer[i+k] = 0;
 			}
+
 			buffer[i+8] &= 0x0F;
 			i += 320/2;
 		}

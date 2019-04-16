@@ -15,12 +15,21 @@ extern int mapa[(240/16)][(320/16)];
 extern int pos_racman_propio_x;
 extern int pos_racman_propio_y;
 
+extern int direccion_racman_propio;
+
 extern int jugador;
 
 
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
+
+
+
+void realizar_movimiento();
+
+
+
 /*--- Codigo de las funciones ---*/
 void keyboard_init()
 {
@@ -57,6 +66,8 @@ void keyboard_init()
 		//
 	rI_ISPC = ~0x0;
 }
+
+
 void KeyboardInt(void)
 {
 	/* Esperar trp mediante la funcion DelayMs()*/
@@ -64,14 +75,7 @@ void KeyboardInt(void)
 	DelayMs(20);
 	/* Identificar la tecla */
 	key = key_read();
-	//
-	/* Si la tecla se ha identificado, visualizarla en el 8SEG*/
-	if(key > -1)
-	{
-		//
-		D8Led_symbol(key);
 
-	}
 	/* Esperar a se libere la tecla: consultar bit 1 del registro de datos del puerto G */
 	while ( (rPDATG & (1 << 1) ) == 0){
 		//NOTHING
@@ -79,68 +83,44 @@ void KeyboardInt(void)
 
 	switch (key){
 		case 1: //mover arriba
-			// comprobar si es legal el movimiento
-			if(pos_racman_propio_y - 1 <= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0){
-
-				//limpiar la casilla donde se encuentra racman
-				limpiar_pixels(pos_racman_propio_y, pos_racman_propio_x);
-
-				//poner a racman en la nueva posicion
-				dibujar_racman(pos_racman_propio_y -1, pos_racman_propio_x, 0);
-
-			}
+			if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0)
+			direccion_racman_propio = 0;
 			break;
 
 		case 2: //mover arriba
-
+			if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0)
+			direccion_racman_propio = 0;
 			break;
 
 		case 4: //mover izquierda
+			if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != 0)
 			// comprobar si es legal el movimiento
-			if(pos_racman_propio_x - 1 <= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != 0){
-
-				//limpiar la casilla donde se encuentra racman
-				limpiar_pixels(pos_racman_propio_y, pos_racman_propio_x);
-
-				//poner a racman en la nueva posicion
-				dibujar_racman(pos_racman_propio_y, pos_racman_propio_x - 1, 0);
-
-			}
+			direccion_racman_propio = 1;
 			break;
 
 		case 8: //mover izquierda
+			if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x - 1] != 0)
+			direccion_racman_propio = 1;
 			break;
 
 		case 7: //mover derecha
-			// comprobar si es legal el movimiento
-			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0){
-
-				//limpiar la casilla donde se encuentra racman
-				limpiar_pixels(pos_racman_propio_y, pos_racman_propio_x);
-
-				//poner a racman en la nueva posicion
-				dibujar_racman(pos_racman_propio_y, pos_racman_propio_x + 1, 0);
-
-			}
+			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0)
+			direccion_racman_propio = 2;
 			break;
 
 		case 11: //mover derecha
+			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0)
+			direccion_racman_propio = 2;
 			break;
 
 		case 13: //mover abajo
-			// comprobar si es legal el movimiento
-			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0){
-
-				//limpiar la casilla donde se encuentra racman
-				limpiar_pixels(pos_racman_propio_y, pos_racman_propio_x);
-
-				//poner a racman en la nueva posicion
-				dibujar_racman(pos_racman_propio_y + 1, pos_racman_propio_x, 0);
-
-			}
+			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0)
+			direccion_racman_propio = 3;
 			break;
 
 		case 14: //mover abajo
+			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0)
+			direccion_racman_propio = 3;
 			break;
 
 		default: //eres un inútil que no sabe apretar los botones
@@ -158,6 +138,8 @@ void KeyboardInt(void)
 	//
 	rI_ISPC = ~0x0;
 }
+
+
 int key_read()
 {
 	int value= -1;
@@ -203,5 +185,98 @@ int key_read()
 	}
 	
 	return value;
+
+}
+
+
+void realizar_movimiento(){
+
+	int x_ant = pos_racman_propio_x;
+	int y_ant = pos_racman_propio_y;
+
+	int mover = 0;
+
+	switch (direccion_racman_propio){
+			case 0: //mover arriba
+				// comprobar si es legal el movimiento
+				if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0){
+
+					//todo añadir comprbante de si había bolita o no para sumar al contador
+					mapa[pos_racman_propio_y][pos_racman_propio_x] = 1;
+
+					pos_racman_propio_y -= 1;
+
+					mapa[pos_racman_propio_y][pos_racman_propio_x] = 3;
+					mover = 1;
+
+				}
+				break;
+
+			case 1: //mover izquierda
+				// comprobar si es legal el movimiento
+				if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != 0){
+
+					//todo añadir comprbante de si había bolita o no para sumar al contador
+					mapa[pos_racman_propio_y][pos_racman_propio_x] = 1;
+
+					pos_racman_propio_x -= 1;
+
+					mapa[pos_racman_propio_y][pos_racman_propio_x] = 3;
+
+					mover = 1;
+
+				}
+				break;
+
+			case 2: //mover derecha
+				// comprobar si es legal el movimiento
+				if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0){
+
+					//todo añadir comprbante de si había bolita o no para sumar al contador
+					mapa[pos_racman_propio_y][pos_racman_propio_x] = 1;
+
+					pos_racman_propio_x += 1;
+
+					mapa[pos_racman_propio_y][pos_racman_propio_x] = 3;
+
+					mover = 1;
+
+				}
+				break;
+
+			case 3: //mover abajo
+				// comprobar si es legal el movimiento
+				if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0){
+
+					//todo añadir comprbante de si había bolita o no para sumar al contador
+					mapa[pos_racman_propio_y][pos_racman_propio_x] = 1;
+
+					pos_racman_propio_y += 1;
+
+					mapa[pos_racman_propio_y][pos_racman_propio_x] = 3;
+
+					mover = 1;
+				}
+				break;
+
+			default: //eres un inútil que no sabe apretar los botones
+				break;
+
+
+		}
+		//todo mandar y recibir información de la uart
+
+
+		if(mover == 1){
+			//limpiar la casilla donde se encuentra racman
+			limpiar_pixels(x_ant, y_ant);
+
+
+			//poner a racman en la nueva posicion
+			dibujar_racman(pos_racman_propio_x, pos_racman_propio_y, 0);
+		}
+
+
+		lanzarTimer(0);
 
 }

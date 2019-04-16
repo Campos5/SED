@@ -1,6 +1,8 @@
 /*--- ficheros de cabecera ---*/
+#include "44blib.h"
 #include "44b.h"
-#include "def.h"
+#include "uart.h"
+#include "Visualizar.h"
 /*--- variables globales ---*/
 int state;
 int which_int;
@@ -16,7 +18,9 @@ void Eint4567_init(void);
 extern void D8Led_symbol(int value);
 extern void DelayMs(int ms_time);
 
-void init_buttons();
+extern void lanzarTimer(int);
+extern void led1_on();
+
 int pulsa();
 
 /*--- codigo de funciones ---*/
@@ -66,13 +70,6 @@ void Eint4567_init(void)
 	state = 0;
 }
 
-void init_buttons(){
-	rPCONG = rPCONG & ~(0x01<<12);
-	rPCONG = rPCONG & ~(0x01<<13);
-	rPCONG = rPCONG & ~(0x01<<14);
-	rPCONG = rPCONG & ~(0x01<<15);
-}
-
 int pulsa(){
 	int pulsado = rPDATG & (0x40);
 	if(pulsado != 0){
@@ -83,6 +80,37 @@ int pulsa(){
 
 void Eint4567_ISR(void)
 {
+	/*Identificar la interrupcion*/
+	which_int = rEXTINTPND;
+
+	/* Actualizar simbolo*/
+	switch (which_int) {
+		case 0x04: //izquierdo
+
+			led1_on();
+			DelayMs(20);
+
+			while(pulsa() == 0);
+
+			dibujar_mapa();
+
+			lanzarTimer(0);
+			break;
+
+		case 0x08: //derecho
+
+			while(pulsa() == 0);
+			break;
+
+
+		default:   //never
+			break;
+	}
+	// muestra el simbolo en el display
+
+
+	// espera 100ms para evitar rebotes
+	DelayMs(100);
 
 	/*Atendemos interrupciones*/
 	//Borramos EXTINTPND ambas l�neas EINT7 y EINT6
