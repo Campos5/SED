@@ -16,8 +16,11 @@ extern int pos_racman_propio_x;
 extern int pos_racman_propio_y;
 
 extern int direccion_racman_propio;
+extern int direccion_defecto_propio;
 
 extern int jugador;
+
+extern int puntos_jugador_1;
 
 
 /*--- Declaracion de funciones ---*/
@@ -83,44 +86,45 @@ void KeyboardInt(void)
 
 	switch (key){
 		case 1: //mover arriba
-			if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0)
-			direccion_racman_propio = 0;
+
+			//if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0)
+				direccion_racman_propio = 0;
 			break;
 
 		case 2: //mover arriba
-			if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0)
-			direccion_racman_propio = 0;
+			//if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0)
+				direccion_racman_propio = 0;
 			break;
 
 		case 4: //mover izquierda
-			if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != 0)
+			//if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != 0)
 			// comprobar si es legal el movimiento
-			direccion_racman_propio = 1;
+				direccion_racman_propio = 1;
 			break;
 
 		case 8: //mover izquierda
-			if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x - 1] != 0)
-			direccion_racman_propio = 1;
+			//if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x - 1] != 0)
+				direccion_racman_propio = 1;
 			break;
 
 		case 7: //mover derecha
-			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0)
-			direccion_racman_propio = 2;
+			//if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0)
+				direccion_racman_propio = 2;
 			break;
 
 		case 11: //mover derecha
-			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0)
-			direccion_racman_propio = 2;
+			//if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0)
+				direccion_racman_propio = 2;
 			break;
 
 		case 13: //mover abajo
-			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0)
-			direccion_racman_propio = 3;
+			//if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0)
+				direccion_racman_propio = 3;
 			break;
 
 		case 14: //mover abajo
-			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0)
-			direccion_racman_propio = 3;
+			//if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0)
+				direccion_racman_propio = 3;
 			break;
 
 		default: //eres un inútil que no sabe apretar los botones
@@ -196,87 +200,130 @@ void realizar_movimiento(){
 
 	int mover = 0;
 
-	switch (direccion_racman_propio){
-			case 0: //mover arriba
-				// comprobar si es legal el movimiento
-				if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != 0){
-
-					//todo añadir comprbante de si había bolita o no para sumar al contador
-					mapa[pos_racman_propio_y][pos_racman_propio_x] = 1;
-
-					pos_racman_propio_y -= 1;
-
-					mapa[pos_racman_propio_y][pos_racman_propio_x] = 3;
-					mover = 1;
-
-				}
-				break;
-
-			case 1: //mover izquierda
-				// comprobar si es legal el movimiento
-				if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != 0){
-
-					//todo añadir comprbante de si había bolita o no para sumar al contador
-					mapa[pos_racman_propio_y][pos_racman_propio_x] = 1;
-
-					pos_racman_propio_x -= 1;
-
-					mapa[pos_racman_propio_y][pos_racman_propio_x] = 3;
-
-					mover = 1;
-
-				}
-				break;
-
-			case 2: //mover derecha
-				// comprobar si es legal el movimiento
-				if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != 0){
-
-					//todo añadir comprbante de si había bolita o no para sumar al contador
-					mapa[pos_racman_propio_y][pos_racman_propio_x] = 1;
-
-					pos_racman_propio_x += 1;
-
-					mapa[pos_racman_propio_y][pos_racman_propio_x] = 3;
-
-					mover = 1;
-
-				}
-				break;
-
-			case 3: //mover abajo
-				// comprobar si es legal el movimiento
-				if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != 0){
-
-					//todo añadir comprbante de si había bolita o no para sumar al contador
-					mapa[pos_racman_propio_y][pos_racman_propio_x] = 1;
-
-					pos_racman_propio_y += 1;
-
-					mapa[pos_racman_propio_y][pos_racman_propio_x] = 3;
-
-					mover = 1;
-				}
-				break;
-
-			default: //eres un inútil que no sabe apretar los botones
-				break;
+	mover = comprobar_mov(direccion_racman_propio);
 
 
-		}
-		//todo mandar y recibir información de la uart
+	if(mover == 1){ //se ha movido donde dice el user
+		direccion_defecto_propio = direccion_racman_propio;
+
+		//limpiar la casilla donde se encuentra racman
+		limpiar_pixels(x_ant, y_ant);
 
 
-		if(mover == 1){
+		//poner a racman en la nueva posicion
+		dibujar_racman(pos_racman_propio_x, pos_racman_propio_y, 0);
+
+	}else{ //se mueve, o lo intenta, en la direccion que llevaba antes
+
+		if(comprobar_mov(direccion_defecto_propio) == 1){
+
 			//limpiar la casilla donde se encuentra racman
 			limpiar_pixels(x_ant, y_ant);
 
 
 			//poner a racman en la nueva posicion
 			dibujar_racman(pos_racman_propio_x, pos_racman_propio_y, 0);
+
+		}else{ //no se mueve para ningún lado
+			//creo que no debería hacer nada aquí
 		}
 
 
-		lanzarTimer(0);
+	}
 
+
+	//todo mandar y recibir información de la uart
+	D8Led_symbol(puntos_jugador_1 % 15);
+
+	lanzarTimer(0);
+
+}
+
+
+int comprobar_mov(int direccion){
+	int mover = 0;
+	switch (direccion){
+		case 0: //mover arriba
+			// comprobar si es legal el movimiento
+			if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != -1){
+
+				//todo añadir comprbante de si había bolita o no para sumar al contador
+				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
+					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+				}
+
+				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
+				pos_racman_propio_y -= 1;
+
+				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3;
+
+				mover = 1;
+			}
+			break;
+
+		case 1: //mover izquierda
+			// comprobar si es legal el movimiento
+			if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != -1){
+
+				//todo añadir comprbante de si había bolita o no para sumar al contador
+				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
+					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+				}
+
+				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
+
+				pos_racman_propio_x -= 1;
+
+				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3;
+
+				mover = 1;
+
+			}
+			break;
+
+		case 2: //mover derecha
+			// comprobar si es legal el movimiento
+			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != -1){
+
+				//todo añadir comprbante de si había bolita o no para sumar al contador
+				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
+					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+				}
+
+				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;;
+
+				pos_racman_propio_x += 1;
+
+				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3;
+
+				mover = 1;
+
+			}
+			break;
+
+		case 3: //mover abajo
+			// comprobar si es legal el movimiento
+			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != -1){
+
+				//todo añadir comprbante de si había bolita o no para sumar al contador
+				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
+					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+				}
+
+				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
+
+				pos_racman_propio_y += 1;
+
+				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3;
+
+				mover = 1;
+			}
+			break;
+
+		default:
+			break;
+
+	}
+
+	return mover;
 }

@@ -10,6 +10,8 @@ int pos_racman_propio_y;
 
 int jugador;
 
+int puntos_jugador_1;
+
 extern void Eint4567_init();
 extern void keyboard_init();
 extern void timer_init();
