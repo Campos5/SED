@@ -18,6 +18,9 @@ extern int mapa[(240/16)][(320/16)];
 extern int pos_racman_propio_x;
 extern int pos_racman_propio_y;
 
+extern int pos_racman_enemigo_x;
+extern int pos_racman_enemigo_y;
+
 extern int direccion_racman_propio;
 extern int direccion_defecto_propio;
 
@@ -219,7 +222,7 @@ void realizar_movimiento(){
 
 
 		//poner a racman en la nueva posicion
-		dibujar_racman(pos_racman_propio_x, pos_racman_propio_y, 0);
+		dibujar_racman(pos_racman_propio_x, pos_racman_propio_y, 0, 0);
 
 	}else{ //se mueve, o lo intenta, en la direccion que llevaba antes
 
@@ -230,7 +233,7 @@ void realizar_movimiento(){
 
 
 			//poner a racman en la nueva posicion
-			dibujar_racman(pos_racman_propio_x, pos_racman_propio_y, 0);
+			dibujar_racman(pos_racman_propio_x, pos_racman_propio_y, 0, 0);
 
 		}else{ //no se mueve para ningún lado
 			//creo que no debería hacer nada aquí
@@ -242,11 +245,31 @@ void realizar_movimiento(){
 	if(tipo_juego == 25){
 		comproar_mov_fantasma();
 	}
+	if(tipo_juego == 12){
 
+		//todo mandar y recibir información de la uart
+		Uart_SendByte(key);
 
-	//todo mandar y recibir información de la uart
-	D8Led_symbol(puntos_jugador_1 % 15);
+		char str[1];
+		char *pt_str = str;
+		while(1){
+			*pt_str = Uart_Getch(); // leer caracter
+			if (*pt_str == 'a'){
+				leds_off();
+				led1_on();
+			}
+			if (*pt_str == 'b'){
+				leds_off();
+				led2_on();
+			}
+			if (((*pt_str-'0') >= 0) && ((*pt_str-'0') < 16)){
+				D8Led_symbol(*pt_str-'0');
+			}
+			pt_str = str;
+		}
+	}
 
+	dibujar_racman(pos_racman_enemigo_x, pos_racman_enemigo_y, 1, 0);
 	lanzarTimer(0);
 
 }

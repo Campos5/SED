@@ -21,6 +21,7 @@ extern void DelayMs(int ms_time);
 extern void lanzarTimer(int);
 extern void lcd_clear();
 
+extern int jugador;
 
 extern int tipo_juego;
 
@@ -101,8 +102,20 @@ void Eint4567_ISR(void)
 		case 0x08: //derecho
 
 			while(pulsa() == 0);
+				if(jugador == -1){
+					Uart_SendByte('a');
+					jugador = 1;
+					//todo cambiar lcd
 
-			tipo_juego = 1;
+				}else{
+
+					dibujar_mapa();
+
+					tipo_juego = 1;
+					lanzarTimer(0);
+				}
+
+
 			break;
 
 

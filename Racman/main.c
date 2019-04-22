@@ -8,12 +8,17 @@
 int pos_racman_propio_x;
 int pos_racman_propio_y;
 
+
+int pos_racman_enemigo_x;
+int pos_racman_enemigo_y;
+
 int jugador;
 
 
 int tipo_juego;
 
 int puntos_jugador_1;
+int puntos_jugador_2;
 
 extern void Eint4567_init();
 extern void keyboard_init();
@@ -22,10 +27,12 @@ extern void timer_init();
 /*--- declaracion de funciones ---*/
 void Main(void);
 
+char str[1];
 
 /*--- codigo de la funcion ---*/
 void Main(void){
 
+	jugador = -1;
 	sys_init(); // inicializacion de la placa, interrupciones, puertos
 
 	keyboard_init();
@@ -34,27 +41,19 @@ void Main(void){
 
 	init_visualizacion();
 
-
-
-
-	while(1);
-	//Uart_Init(115200); // inicializacion de la Uart
+	Uart_Init(115200); // inicializacion de la Uart
 	//Uart_Config(); // configuración de interrupciones y buffers
 
-	// Por ahora este main espera que le llegue un entero por el serie
-	// y cuando le llega hace un led switch
-/*
-	D8Led_symbol(0);
+	char *pt_str = str;
+	while(1){
+		*pt_str = Uart_Getch(); // leer caracter
+		if (*pt_str == 'a'){
+			jugador = 2;
+			//todo cambiar lcd
+			break;
+		}
+		pt_str = str;
+	}
 
-	char* mensajeRecibido = "";
-	char c[60];
-	int numeroLeido = 0;
-
-	lcd_on();
-
-	lcd_draw_vline( 240, 0, 150, BLACK, 4);
-
-	lcd_printf(40, 16, BLACK, "OUTBOX");
-
-	lcd_printf(210, 16, BLACK, "INBOX");*/
+	while(1);
 }
