@@ -8,7 +8,10 @@
 volatile UCHAR *keyboard_base = (UCHAR *)0x06000000;
 int key;
 /*--- Funciones externas ---*/
-void D8Led_symbol(int value);
+extern void D8Led_symbol(int value);
+extern void dibujar_coco(int x, int y);
+extern void poner_punto(int x, int y, int z);
+
 
 extern int mapa[(240/16)][(320/16)];
 
@@ -23,6 +26,8 @@ extern int jugador;
 extern int puntos_jugador_1;
 
 
+extern int tipo_juego;
+
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
@@ -30,7 +35,10 @@ void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
 
 
 void realizar_movimiento();
-
+int comprobar_mov(int direccion);
+void comproar_mov_fantasma();
+int* mover_fantasma(int x, int y, int direccion, int f, int movs[]);
+int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i);
 
 
 /*--- Codigo de las funciones ---*/
@@ -54,7 +62,7 @@ void keyboard_init()
 	pISR_EINT1 = (unsigned)KeyboardInt;
 	/* Configurar controlador de interrupciones */
 		// Borra INTPND escribiendo 1s en I_ISPC
-	rI_ISPC = ~0x0;
+	rI_ISPC = BIT_EINT1;
 		// Configura las lineas como de tipo IRQ mediante INTMOD
 	rINTMOD = 0x0;
 		// Habilita int. vectorizadas y la linea IRQ (FIQ no) mediante INTCON
@@ -67,7 +75,7 @@ void keyboard_init()
 
 	/* Por precaucion, se vuelven a borrar los bits de INTPND correspondientes*/
 		//
-	rI_ISPC = ~0x0;
+	rI_ISPC = BIT_EINT1;
 }
 
 
@@ -231,6 +239,10 @@ void realizar_movimiento(){
 
 	}
 
+	if(tipo_juego == 25){
+		comproar_mov_fantasma();
+	}
+
 
 	//todo mandar y recibir información de la uart
 	D8Led_symbol(puntos_jugador_1 % 15);
@@ -241,6 +253,7 @@ void realizar_movimiento(){
 
 
 int comprobar_mov(int direccion){
+
 	int mover = 0;
 	switch (direccion){
 		case 0: //mover arriba
@@ -290,7 +303,7 @@ int comprobar_mov(int direccion){
 					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
 				}
 
-				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;;
+				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
 
 				pos_racman_propio_x += 1;
 
@@ -327,3 +340,160 @@ int comprobar_mov(int direccion){
 
 	return mover;
 }
+
+
+void comproar_mov_fantasma(){
+
+	int i, j, k;
+	int *pos_fantasmas;
+	for(k = 0; k < 8; k++)
+		pos_fantasmas[k] = -1;
+	int fantasma = 0;
+	for (i = 0; i<320/16; i++){
+		for (j = 0; j<240/16; j++){
+
+
+			int check = comprobarFantasmaMovido(pos_fantasmas, j, i);
+			if(mapa[j][i] > 8 && mapa[j][i] < 12 && check != 0){
+				int aux[2] = {pos_racman_propio_x - i, pos_racman_propio_y - j};
+				int movido = 0; //1 si se ha movido
+
+				if(fabs(aux[0]) > fabs(aux[1])){ //movimiento horizontal
+					if(aux[0] > 0){ //intentar mover a la derecha
+						if(mapa[j][i+1] > -1 && mapa[j][i+1] < 3){
+							pos_fantasmas = mover_fantasma(i, j, 2, fantasma, pos_fantasmas);
+							movido = 1;
+						}
+					}else{ //intentar mover a la izquierda
+
+						if(mapa[j][i-1] > -1 && mapa[j][i-1] < 3){
+							pos_fantasmas = mover_fantasma(i, j, 1, fantasma, pos_fantasmas);
+							movido = 1;
+						}
+					}
+				}else{
+					if(aux[1] > 0){ //intentar mover abajo
+						if(mapa[j+1][i] > -1 && mapa[j+1][i] < 3){
+							pos_fantasmas = mover_fantasma(i, j, 3, fantasma, pos_fantasmas);
+							movido = 1;
+						}
+					}else{ //intentar mover arriba
+						if(mapa[j-1][i] > -1 && mapa[j-1][i] < 3){
+							pos_fantasmas = mover_fantasma(i, j, 0, fantasma, pos_fantasmas);
+							movido = 1;
+						}
+					}
+
+				}
+
+				if(movido == 0){ //mover a sitio posible aleatorio
+					if(mapa[j+1][i] > -1 && mapa[j+1][i] < 3){
+						pos_fantasmas = mover_fantasma(i, j, 3, fantasma, pos_fantasmas);
+
+					}else if(mapa[j-1][i] > -1 && mapa[j-1][i] < 3){
+						pos_fantasmas = mover_fantasma(i, j, 0, fantasma, pos_fantasmas);
+
+
+					}else if(mapa[j][i+1] > -1 && mapa[j][i+1] < 3){
+						pos_fantasmas = mover_fantasma(i, j, 2, fantasma, pos_fantasmas);
+
+
+					}else if(mapa[j][i-1] > -1 && mapa[j][i-1] < 3){
+						pos_fantasmas = mover_fantasma(i, j, 1, fantasma, pos_fantasmas);
+
+					}
+				}
+
+				fantasma++;
+			}
+
+		}
+	}
+
+}
+
+
+int* mover_fantasma(int x, int y, int direccion, int f, int movs[]){
+
+	if(mapa[y][x] == 9 ){
+		limpiar_pixels(x, y);
+	}else if(mapa[y][x] == 10){
+		poner_punto(x, y, 0);
+	}else{
+		poner_punto(x, y, 1);
+	}
+	mapa[y][x] -= 9;
+
+	switch (direccion){
+		case 0: //mover arriba
+
+			dibujar_coco(x, y-1);
+			mapa[y-1][x] += 9;
+
+			movs[f*2] = y-1;
+			movs[f*2 +1] = x;
+
+			break;
+
+		case 1: //mover izquierda
+
+			dibujar_coco(x-1, y);
+			mapa[y][x-1] += 9;
+
+			movs[f*2] = y;
+			movs[f*2 +1] = x-1;
+
+			break;
+
+		case 2: //mover derecha
+
+			dibujar_coco(x+1, y);
+			mapa[y][x+1] += 9;
+
+			movs[f*2] = y;
+			movs[f*2 +1] = x+1;
+
+			break;
+
+		case 3: //mover abajo
+
+			dibujar_coco(x, y+1);
+			mapa[y+1][x] += 9;
+
+			movs[f*2] = y+1;
+			movs[f*2 +1] = x;
+
+			break;
+
+		default:
+			break;
+
+	}
+	return movs;
+
+}
+
+
+int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i){
+	int k;
+    int q,w,e,r,t,y,u,o;
+    q = *(pos_fantasmas+0);
+    w = *(pos_fantasmas+1);
+    e = *(pos_fantasmas+2);
+    r = *(pos_fantasmas+3);
+    t = *(pos_fantasmas+4);
+    y = *(pos_fantasmas+5);
+    u = *(pos_fantasmas+6);
+    o = *(pos_fantasmas+7);
+	for(k = 0; k < 8; k+=2){
+		if(*(pos_fantasmas+k) == j && *(pos_fantasmas+k+1) == i)
+			return 0;
+	}
+	return 1;
+}
+
+
+
+
+
+

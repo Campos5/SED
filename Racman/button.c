@@ -19,7 +19,10 @@ extern void D8Led_symbol(int value);
 extern void DelayMs(int ms_time);
 
 extern void lanzarTimer(int);
-extern void led1_on();
+extern void lcd_clear();
+
+
+extern int tipo_juego;
 
 int pulsa();
 
@@ -67,7 +70,6 @@ void Eint4567_init(void)
 	/* Por precaucion, se vuelven a borrar los bits de INTPND y EXTINTPND */
 	rEXTINTPND = 0xF;
 	rI_ISPC = BIT_EINT4567;
-	state = 0;
 }
 
 int pulsa(){
@@ -87,19 +89,20 @@ void Eint4567_ISR(void)
 	switch (which_int) {
 		case 0x04: //izquierdo
 
-			led1_on();
-			DelayMs(20);
-
 			while(pulsa() == 0);
 
 			dibujar_mapa();
 
+			tipo_juego = 0;
 			lanzarTimer(0);
+
 			break;
 
 		case 0x08: //derecho
 
 			while(pulsa() == 0);
+
+			tipo_juego = 1;
 			break;
 
 
