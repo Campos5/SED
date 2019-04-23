@@ -2,7 +2,7 @@
 #include "44b.h"
 #include "44blib.h"
 #include "def.h"
-/*--- Definición de macros ---*/
+/*--- DefiniciÃ³n de macros ---*/
 #define KEY_VALUE_MASK 0xF
 /*--- Variables globales ---*/
 volatile UCHAR *keyboard_base = (UCHAR *)0x06000000;
@@ -138,7 +138,7 @@ void KeyboardInt(void)
 				direccion_racman_propio = 3;
 			break;
 
-		default: //eres un inútil que no sabe apretar los botones
+		default: //eres un inÃºtil que no sabe apretar los botones
 			break;
 
 	}
@@ -149,7 +149,7 @@ void KeyboardInt(void)
 	/* Esperar trd mediante la funcion Delay() */
 	//
 	DelayMs(100);
-	/* Borrar interrupción de teclado */
+	/* Borrar interrupciÃ³n de teclado */
 	//
 	rI_ISPC = ~0x0;
 }
@@ -161,7 +161,7 @@ int key_read()
 	char temp;
 	// Identificar la tecla mediante ''scanning''
 
-	// Si la identificación falla la función debe devolver -1
+	// Si la identificaciÃ³n falla la funciÃ³n debe devolver -1
 	temp = *(keyboard_base + 0xfd) & KEY_VALUE_MASK;
 
 	//Usamos KEY_VALUE_MASK para quedarnos con los 4 bits menos significativos
@@ -174,7 +174,7 @@ int key_read()
 	}
 
 	/*
-	* ESCRIBIR EL CÓDIGO CORRESPONDIENTE A LAS OTRAS FILAS Y COLUMNAS
+	* ESCRIBIR EL CÃ“DIGO CORRESPONDIENTE A LAS OTRAS FILAS Y COLUMNAS
 	*/
 	temp = *(keyboard_base + 0xfb) & KEY_VALUE_MASK;
 	switch (temp) {
@@ -235,8 +235,8 @@ void realizar_movimiento(){
 			//poner a racman en la nueva posicion
 			dibujar_racman(pos_racman_propio_x, pos_racman_propio_y, 0, 0);
 
-		}else{ //no se mueve para ningún lado
-			//creo que no debería hacer nada aquí
+		}else{ //no se mueve para ningÃºn lado
+			//creo que no deberÃ­a hacer nada aquÃ­
 		}
 
 
@@ -247,7 +247,7 @@ void realizar_movimiento(){
 	}
 	if(tipo_juego == 12){
 
-		//todo mandar y recibir información de la uart
+		//todo mandar y recibir informaciÃ³n de la uart
 		Uart_SendByte(key);
 
 		char str[1];
@@ -283,7 +283,7 @@ int comprobar_mov(int direccion){
 			// comprobar si es legal el movimiento
 			if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != -1){
 
-				//todo añadir comprbante de si había bolita o no para sumar al contador
+				//todo aÃ±adir comprbante de si habÃ­a bolita o no para sumar al contador
 				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
 					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
 				}
@@ -301,7 +301,7 @@ int comprobar_mov(int direccion){
 			// comprobar si es legal el movimiento
 			if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != -1){
 
-				//todo añadir comprbante de si había bolita o no para sumar al contador
+				//todo aÃ±adir comprbante de si habÃ­a bolita o no para sumar al contador
 				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
 					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
 				}
@@ -321,7 +321,7 @@ int comprobar_mov(int direccion){
 			// comprobar si es legal el movimiento
 			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != -1){
 
-				//todo añadir comprbante de si había bolita o no para sumar al contador
+				//todo aÃ±adir comprbante de si habÃ­a bolita o no para sumar al contador
 				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
 					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
 				}
@@ -341,7 +341,7 @@ int comprobar_mov(int direccion){
 			// comprobar si es legal el movimiento
 			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != -1){
 
-				//todo añadir comprbante de si había bolita o no para sumar al contador
+				//todo aÃ±adir comprbante de si habÃ­a bolita o no para sumar al contador
 				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
 					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
 				}
@@ -368,7 +368,9 @@ int comprobar_mov(int direccion){
 void comproar_mov_fantasma(){
 
 	int i, j, k;
-	int *pos_fantasmas;
+	//int *pos_fantasmas;
+	//TODO comprobar si esto funciona
+	int* pos_fantasmas = (int *) malloc(sizeof(int) * 8);
 	for(k = 0; k < 8; k++)
 		pos_fantasmas[k] = -1;
 	int fantasma = 0;
