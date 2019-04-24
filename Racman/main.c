@@ -36,13 +36,14 @@ void Main(void){
 	jugador = -1;
 	sys_init(); // inicializacion de la placa, interrupciones, puertos
 
+	Uart_Init(115200); // inicializacion de la Uart
 	keyboard_init();
+
 	Eint4567_init(); // inicializacion de los botones
 	timer_init();
 
 	init_visualizacion();
 
-	Uart_Init(115200); // inicializacion de la Uart
 	//Uart_Config(); // configuración de interrupciones y buffers
 
 	char *pt_str = str;

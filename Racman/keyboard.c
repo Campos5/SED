@@ -39,7 +39,8 @@ void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
 
 
 void realizar_movimiento();
-int comprobar_mov(int direccion);
+int comprobar_mov_propio(int direccion);
+int comprobar_mov_enemigo(int direccion);
 void comproar_mov_fantasma();
 int* mover_fantasma(int x, int y, int direccion, int f, int movs[]);
 int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i);
@@ -212,7 +213,7 @@ void realizar_movimiento(){
 
 	int mover = 0;
 
-	mover = comprobar_mov(direccion_racman_propio);
+	mover = comprobar_mov_propio(direccion_racman_propio);
 
 
 	if(mover == 1){ //se ha movido donde dice el user
@@ -227,7 +228,7 @@ void realizar_movimiento(){
 
 	}else{ //se mueve, o lo intenta, en la direccion que llevaba antes
 
-		if(comprobar_mov(direccion_defecto_propio) == 1){
+		if(comprobar_mov_propio(direccion_defecto_propio) == 1){
 
 			//limpiar la casilla donde se encuentra racman
 			limpiar_pixels(x_ant, y_ant);
@@ -246,37 +247,50 @@ void realizar_movimiento(){
 	if(tipo_juego == 25){
 		comproar_mov_fantasma();
 	}
-	if(tipo_juego == 12){
+	if(tipo_juego == 1){
 
 		//todo mandar y recibir información de la uart
-		Uart_SendByte(key);
+		if(mover == 1){
+
+			Uart_SendByte(direccion_racman_propio);
+		}else{
+
+			Uart_SendByte(direccion_defecto_propio);
+		}
+		int direccion_enemigo;
 
 		char str[1];
 		char *pt_str = str;
 		while(1){
 			*pt_str = Uart_Getch(); // leer caracter
-			if (*pt_str == 'a'){
-				leds_off();
-				led1_on();
-			}
-			if (*pt_str == 'b'){
-				leds_off();
-				led2_on();
-			}
-			if (((*pt_str-'0') >= 0) && ((*pt_str-'0') < 16)){
-				D8Led_symbol(*pt_str-'0');
-			}
+			direccion_enemigo = *pt_str;
+			break;
 			pt_str = str;
 		}
+
+		x_ant = pos_racman_enemigo_x;
+		y_ant = pos_racman_enemigo_y;
+		if(comprobar_mov_enemigo(direccion_enemigo) == 1){
+
+			//limpiar la casilla donde se encuentra racman
+			limpiar_pixels(x_ant, y_ant);
+
+
+			//poner a racman en la nueva posicion
+			dibujar_racman(pos_racman_enemigo_x, pos_racman_enemigo_y, 1, 0);
+
+		}else{ //no se mueve para ningún lado
+			//creo que no debería hacer nada aquí
+		}
+
 	}
 
-	dibujar_racman(pos_racman_enemigo_x, pos_racman_enemigo_y, 1, 0);
 	lanzarTimer(0);
 
 }
 
 
-int comprobar_mov(int direccion){
+int comprobar_mov_propio(int direccion){
 
 	int mover = 0;
 	switch (direccion){
@@ -285,14 +299,18 @@ int comprobar_mov(int direccion){
 			if(pos_racman_propio_y - 1 >= 0 && mapa[pos_racman_propio_y - 1][pos_racman_propio_x] != -1){
 
 				//todo añadir comprbante de si había bolita o no para sumar al contador
-				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
-					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3*jugador || mapa[pos_racman_propio_y][pos_racman_propio_x] < 3*jugador+3){ //se lleva puntos
+
+					if(jugador == 1)
+						puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+					else
+						puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 6;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
 				pos_racman_propio_y -= 1;
 
-				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3;
+				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3*jugador;
 
 				mover = 1;
 			}
@@ -303,15 +321,18 @@ int comprobar_mov(int direccion){
 			if(pos_racman_propio_x - 1 >= 0 && mapa[pos_racman_propio_y][pos_racman_propio_x - 1] != -1){
 
 				//todo añadir comprbante de si había bolita o no para sumar al contador
-				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
-					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3*jugador || mapa[pos_racman_propio_y][pos_racman_propio_x] < 3*jugador+3){ //se lleva puntos
+					if(jugador == 1)
+						puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+					else
+						puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 6;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
 
 				pos_racman_propio_x -= 1;
 
-				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3;
+				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3*jugador;
 
 				mover = 1;
 
@@ -323,15 +344,18 @@ int comprobar_mov(int direccion){
 			if(pos_racman_propio_x + 1 <= 19 && mapa[pos_racman_propio_y][pos_racman_propio_x + 1] != -1){
 
 				//todo añadir comprbante de si había bolita o no para sumar al contador
-				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
-					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3*jugador || mapa[pos_racman_propio_y][pos_racman_propio_x] < 3*jugador+3){ //se lleva puntos
+					if(jugador == 1)
+						puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+					else
+						puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 6;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
 
 				pos_racman_propio_x += 1;
 
-				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3;
+				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3*jugador;
 
 				mover = 1;
 
@@ -343,15 +367,18 @@ int comprobar_mov(int direccion){
 			if(pos_racman_propio_y + 1 <= 15 && mapa[pos_racman_propio_y + 1][pos_racman_propio_x] != -1){
 
 				//todo añadir comprbante de si había bolita o no para sumar al contador
-				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3 || mapa[pos_racman_propio_y][pos_racman_propio_x] < 6){ //se lleva puntos
-					puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+				if(mapa[pos_racman_propio_y][pos_racman_propio_x] > 3*jugador || mapa[pos_racman_propio_y][pos_racman_propio_x] < 3*jugador){ //se lleva puntos
+					if(jugador == 1)
+						puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3;
+					else
+						puntos_jugador_1 += mapa[pos_racman_propio_y][pos_racman_propio_x] - 6;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
 
 				pos_racman_propio_y += 1;
 
-				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3;
+				mapa[pos_racman_propio_y][pos_racman_propio_x] += 3*jugador;
 
 				mover = 1;
 			}
@@ -364,6 +391,80 @@ int comprobar_mov(int direccion){
 
 	return mover;
 }
+
+
+
+int comprobar_mov_enemigo(int direccion){
+
+	int mover = 0;
+	switch (direccion){
+		case 0: //mover arriba
+			// comprobar si es legal el movimiento
+			if(pos_racman_enemigo_y - 1 >= 0 && mapa[pos_racman_enemigo_y - 1][pos_racman_enemigo_x] != -1){
+
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] = 0;
+				pos_racman_enemigo_y -= 1;
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] += 3*jugador;
+
+				mover = 1;
+			}
+			break;
+
+		case 1: //mover izquierda
+			// comprobar si es legal el movimiento
+			if(pos_racman_enemigo_x - 1 >= 0 && mapa[pos_racman_enemigo_y][pos_racman_enemigo_x - 1] != -1){
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] = 0;
+
+				pos_racman_enemigo_x -= 1;
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] += 3*jugador;
+
+				mover = 1;
+
+			}
+			break;
+
+		case 2: //mover derecha
+			// comprobar si es legal el movimiento
+			if(pos_racman_enemigo_x + 1 <= 19 && mapa[pos_racman_enemigo_y][pos_racman_enemigo_x + 1] != -1){
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] = 0;
+
+				pos_racman_enemigo_x += 1;
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] += 3*jugador;
+
+				mover = 1;
+
+			}
+			break;
+
+		case 3: //mover abajo
+			// comprobar si es legal el movimiento
+			if(pos_racman_enemigo_y + 1 <= 15 && mapa[pos_racman_enemigo_y + 1][pos_racman_enemigo_x] != -1){
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] = 0;
+
+				pos_racman_enemigo_y += 1;
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] += 3*jugador;
+
+				mover = 1;
+			}
+			break;
+
+		default:
+			break;
+
+	}
+
+	return mover;
+}
+
+
 
 
 void comproar_mov_fantasma(){

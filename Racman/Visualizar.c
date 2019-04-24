@@ -289,7 +289,7 @@ void dibujar_mapa(void){
 				dibujar_coco(i, j, 1);
 			}
 
-			if(mapa[j][i] == 3){
+			if(mapa[j][i] == 3*jugador){
 				dibujar_racman(i, j, 0, 0);
 				pos_racman_propio_x = i;
 				pos_racman_propio_y = j;
@@ -297,7 +297,12 @@ void dibujar_mapa(void){
 				direccion_defecto_propio = 1;
 				puntos_jugador_1 = 0;
 			}
-			if(mapa[j][i] == 6){
+			int otro_jugador;
+			if(jugador == 1)
+				otro_jugador = 2;
+			else
+				otro_jugador = 1;
+			if(mapa[j][i] == 3*otro_jugador){
 				dibujar_racman(i, j, 1, 0);
 				pos_racman_enemigo_x = i;
 				pos_racman_enemigo_y = j;

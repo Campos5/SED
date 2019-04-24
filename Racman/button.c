@@ -103,7 +103,8 @@ void Eint4567_ISR(void)
 
 			while(pulsa() == 0);
 				if(jugador == -1){
-					Uart_SendByte('i');
+					char empieza[1] = "i";
+					Uart_SendByte(*empieza);
 					jugador = 1;
 					//todo cambiar lcd
 					cargar_pantalla_carga();
