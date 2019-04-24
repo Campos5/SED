@@ -259,6 +259,14 @@ void init_visualizacion(void){
 }
 
 
+void cargar_pantalla_carga(void){
+
+	lcd_clear();
+	lcd_puts_x2( 0, 20, BLACK, "     Listo para empezar     " );
+	lcd_puts( 0, 60, BLACK, "   Pulsa Boton Derecho empezar   ");
+}
+
+
 void dibujar_mapa(void){
 	lcd_clear();
 	int i, j;

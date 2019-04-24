@@ -2,6 +2,7 @@
 #include "44b.h"
 #include "44blib.h"
 #include "def.h"
+#include <stdlib.h>
 /*--- Definición de macros ---*/
 #define KEY_VALUE_MASK 0xF
 /*--- Variables globales ---*/
@@ -435,6 +436,8 @@ void comproar_mov_fantasma(){
 		}
 	}
 
+	free(pos_fantasmas);
+
 }
 
 
@@ -501,15 +504,6 @@ int* mover_fantasma(int x, int y, int direccion, int f, int movs[]){
 
 int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i){
 	int k;
-    int q,w,e,r,t,y,u,o;
-    q = *(pos_fantasmas+0);
-    w = *(pos_fantasmas+1);
-    e = *(pos_fantasmas+2);
-    r = *(pos_fantasmas+3);
-    t = *(pos_fantasmas+4);
-    y = *(pos_fantasmas+5);
-    u = *(pos_fantasmas+6);
-    o = *(pos_fantasmas+7);
 	for(k = 0; k < 8; k+=2){
 		if(*(pos_fantasmas+k) == j && *(pos_fantasmas+k+1) == i)
 			return 0;

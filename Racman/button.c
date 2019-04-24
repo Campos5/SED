@@ -20,7 +20,7 @@ extern void DelayMs(int ms_time);
 
 extern void lanzarTimer(int);
 extern void lcd_clear();
-
+extern void cargar_pantalla_carga();
 extern int jugador;
 
 extern int tipo_juego;
@@ -103,9 +103,10 @@ void Eint4567_ISR(void)
 
 			while(pulsa() == 0);
 				if(jugador == -1){
-					Uart_SendByte('a');
+					Uart_SendByte('i');
 					jugador = 1;
 					//todo cambiar lcd
+					cargar_pantalla_carga();
 
 				}else{
 

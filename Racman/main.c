@@ -23,6 +23,7 @@ int puntos_jugador_2;
 extern void Eint4567_init();
 extern void keyboard_init();
 extern void timer_init();
+extern void cargar_pantalla_carga();
 
 /*--- declaracion de funciones ---*/
 void Main(void);
@@ -47,9 +48,10 @@ void Main(void){
 	char *pt_str = str;
 	while(1){
 		*pt_str = Uart_Getch(); // leer caracter
-		if (*pt_str == 'a'){
+		if (*pt_str == 'i'){ //el otro jugador a iniciado juego
 			jugador = 2;
 			//todo cambiar lcd
+			cargar_pantalla_carga();
 			break;
 		}
 		pt_str = str;
