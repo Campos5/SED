@@ -45,7 +45,7 @@ void comproar_mov_fantasma();
 int* mover_fantasma(int x, int y, int direccion, int f, int movs[]);
 int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i);
 
-
+void mapaPorConsola(int map[16][20]);
 /*--- Codigo de las funciones ---*/
 void keyboard_init()
 {
@@ -244,7 +244,7 @@ void realizar_movimiento(){
 
 	}
 
-	if(tipo_juego == 25){
+	if(tipo_juego == 0){
 		comproar_mov_fantasma();
 	}
 	if(tipo_juego == 1){
@@ -284,6 +284,8 @@ void realizar_movimiento(){
 		}
 
 	}
+
+	//mapaPorConsola(mapa);
 
 	lanzarTimer(0);
 
@@ -393,7 +395,6 @@ int comprobar_mov_propio(int direccion){
 }
 
 
-
 int comprobar_mov_enemigo(int direccion){
 
 	int mover = 0;
@@ -463,8 +464,6 @@ int comprobar_mov_enemigo(int direccion){
 
 	return mover;
 }
-
-
 
 
 void comproar_mov_fantasma(){
@@ -544,11 +543,14 @@ void comproar_mov_fantasma(){
 
 int* mover_fantasma(int x, int y, int direccion, int f, int movs[]){
 
+	int aux = mapa[y][x];
 	if(mapa[y][x] == 9 ){
 		limpiar_pixels(x, y);
 	}else if(mapa[y][x] == 10){
+		limpiar_pixels(x, y);
 		poner_punto(x, y, 0);
 	}else{
+		limpiar_pixels(x, y);
 		poner_punto(x, y, 1);
 	}
 	mapa[y][x] -= 9;
@@ -610,6 +612,19 @@ int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i){
 			return 0;
 	}
 	return 1;
+}
+
+
+void mapaPorConsola(int map[16][20]){
+	int i, j;
+	for (i = 0; i<320/16; i++){
+		for (j = 0; j<240/16; j++){
+
+			printf("%i ", mapa[j][i]);
+
+		}
+		printf("\n");
+	}
 }
 
 

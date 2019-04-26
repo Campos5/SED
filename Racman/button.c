@@ -92,9 +92,9 @@ void Eint4567_ISR(void)
 
 			while(pulsa() == 0);
 
-			dibujar_mapa();
-
+			jugador = 1;
 			tipo_juego = 0;
+			dibujar_mapa();
 			lanzarTimer(0);
 
 			break;
@@ -110,10 +110,8 @@ void Eint4567_ISR(void)
 					cargar_pantalla_carga();
 
 				}else{
-
-					dibujar_mapa();
-
 					tipo_juego = 1;
+					dibujar_mapa();
 					lanzarTimer(0);
 				}
 

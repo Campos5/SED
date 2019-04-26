@@ -13,6 +13,7 @@ int direccion_racman_propio; //0 - arriba; 1 - izquierda; 2 - derecha; 3 - abajo
 int direccion_defecto_propio;
 
 extern int jugador;
+extern int tipo_juego;
 
 extern int puntos_jugador_1;
 extern int puntos_jugador_2;
@@ -254,7 +255,7 @@ void init_visualizacion(void){
 
 	lcd_puts_x2( 0, 20, BLACK, "     RAC-MAN     " );
 	lcd_puts( 0, 60, BLACK, "   Pulsa Boton Izquierdo para jugar solo   " );
-	lcd_puts( 0, 100, BLACK, "   Pulsa Boton Derecho para jugar contra otro jugador   " );
+	lcd_puts( 0, 100, BLACK, "   o el Derecho para jugar contra otro jugador   " );
 
 }
 
@@ -303,12 +304,17 @@ void dibujar_mapa(void){
 			else
 				otro_jugador = 1;
 			if(mapa[j][i] == 3*otro_jugador){
-				dibujar_racman(i, j, 1, 0);
-				pos_racman_enemigo_x = i;
-				pos_racman_enemigo_y = j;
-				//direccion_racman_propio = 1; //direccion inicial para la izquierda
-				//direccion_defecto_propio = 1;
-				puntos_jugador_2 = 0;
+				if(tipo_juego == 0){
+					mapa[j][i] = 1;
+					poner_punto(i, j, 0);
+				}else{
+					dibujar_racman(i, j, 1, 0);
+					pos_racman_enemigo_x = i;
+					pos_racman_enemigo_y = j;
+					//direccion_racman_propio = 1; //direccion inicial para la izquierda
+					//direccion_defecto_propio = 1;
+					puntos_jugador_2 = 0;
+				}
 			}
 		}
 	}
@@ -340,7 +346,7 @@ void poner_muro(int x, int y){
 void poner_punto(int x, int y, int z){
 	x *=16;
 	y *=16;
-	pintar_pixels(x, y, punto);
+	pintar_pixels(x, y, punto[z]);
 }
 
 
