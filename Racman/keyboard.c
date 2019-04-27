@@ -3,6 +3,10 @@
 #include "44blib.h"
 #include "def.h"
 #include <stdlib.h>
+#include<stdlib.h>
+#include<time.h>
+
+
 /*--- Definición de macros ---*/
 #define KEY_VALUE_MASK 0xF
 /*--- Variables globales ---*/
@@ -42,10 +46,10 @@ void realizar_movimiento();
 int comprobar_mov_propio(int direccion);
 int comprobar_mov_enemigo(int direccion);
 void comproar_mov_fantasma();
+int* obtener_mejorer_movimientos(int racmanX, int racmanY, int fantasmaX, int fantasmaY);
 int* mover_fantasma(int x, int y, int direccion, int f, int movs[]);
 int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i);
 
-void mapaPorConsola(int map[16][20]);
 /*--- Codigo de las funciones ---*/
 void keyboard_init()
 {
@@ -474,6 +478,7 @@ void comproar_mov_fantasma(){
 	int* pos_fantasmas = (int *) malloc(sizeof(int) * 8);
 	for(k = 0; k < 8; k++)
 		pos_fantasmas[k] = -1;
+		
 	int fantasma = 0;
 	for (i = 0; i<320/16; i++){
 		for (j = 0; j<240/16; j++){
@@ -481,55 +486,45 @@ void comproar_mov_fantasma(){
 
 			int check = comprobarFantasmaMovido(pos_fantasmas, j, i);
 			if(mapa[j][i] > 8 && mapa[j][i] < 12 && check != 0){
-				int aux[2] = {pos_racman_propio_x - i, pos_racman_propio_y - j};
+				 
+				int* mejores_movimientos = obtener_mejorer_movimientos(pos_racman_propio_x, pos_racman_propio_y, i, j);
+				int k;
 				int movido = 0; //1 si se ha movido
+				for(k = 0; k < 4; k++){
+					if(movido == 1)
+						break;
 
-				if(fabs(aux[0]) > fabs(aux[1])){ //movimiento horizontal
-					if(aux[0] > 0){ //intentar mover a la derecha
-						if(mapa[j][i+1] > -1 && mapa[j][i+1] < 3){
-							pos_fantasmas = mover_fantasma(i, j, 2, fantasma, pos_fantasmas);
-							movido = 1;
-						}
-					}else{ //intentar mover a la izquierda
-
-						if(mapa[j][i-1] > -1 && mapa[j][i-1] < 3){
-							pos_fantasmas = mover_fantasma(i, j, 1, fantasma, pos_fantasmas);
-							movido = 1;
-						}
-					}
-				}else{
-					if(aux[1] > 0){ //intentar mover abajo
-						if(mapa[j+1][i] > -1 && mapa[j+1][i] < 3){
-							pos_fantasmas = mover_fantasma(i, j, 3, fantasma, pos_fantasmas);
-							movido = 1;
-						}
-					}else{ //intentar mover arriba
-						if(mapa[j-1][i] > -1 && mapa[j-1][i] < 3){
-							pos_fantasmas = mover_fantasma(i, j, 0, fantasma, pos_fantasmas);
-							movido = 1;
-						}
-					}
-
-				}
-
-				if(movido == 0){ //mover a sitio posible aleatorio
-					if(mapa[j+1][i] > -1 && mapa[j+1][i] < 3){
-						pos_fantasmas = mover_fantasma(i, j, 3, fantasma, pos_fantasmas);
-
-					}else if(mapa[j-1][i] > -1 && mapa[j-1][i] < 3){
-						pos_fantasmas = mover_fantasma(i, j, 0, fantasma, pos_fantasmas);
-
-
-					}else if(mapa[j][i+1] > -1 && mapa[j][i+1] < 3){
-						pos_fantasmas = mover_fantasma(i, j, 2, fantasma, pos_fantasmas);
-
-
-					}else if(mapa[j][i-1] > -1 && mapa[j][i-1] < 3){
-						pos_fantasmas = mover_fantasma(i, j, 1, fantasma, pos_fantasmas);
-
+					switch (mejores_movimientos[k])
+					{
+						case 0:
+							if(mapa[j-1][i] > -1 && mapa[j-1][i] < 3){
+								movido = 1;
+								pos_fantasmas = mover_fantasma(i, j, 0, fantasma, pos_fantasmas);
+							}
+							break;
+						case 1:
+							if(mapa[j][i-1] > -1 && mapa[j][i-1] < 3){
+								movido = 1;
+								pos_fantasmas = mover_fantasma(i, j, 1, fantasma, pos_fantasmas);
+							}
+							break;
+						case 2:
+							if(mapa[j][i+1] > -1 && mapa[j][i+1] < 3){
+								movido = 1;
+								pos_fantasmas = mover_fantasma(i, j, 2, fantasma, pos_fantasmas);
+							}
+							break;
+						case 3:
+							if(mapa[j+1][i] > -1 && mapa[j+1][i] < 3){
+								movido = 1;
+								pos_fantasmas = mover_fantasma(i, j, 3, fantasma, pos_fantasmas);
+							}
+							break;
+						
+						default:
+							break;
 					}
 				}
-
 				fantasma++;
 			}
 
@@ -538,6 +533,113 @@ void comproar_mov_fantasma(){
 
 	free(pos_fantasmas);
 
+}
+
+
+int* obtener_mejorer_movimientos(int racmanX, int racmanY, int fantasmaX, int fantasmaY){
+	
+
+	int* better_movs  = (int *) malloc(sizeof(int) * 4);
+	int aux[2] = {racmanX - fantasmaX, racmanY - fantasmaY};
+
+	int i;
+
+	for(i = 0; i < 4; i++ ){
+		better_movs[i] = -1;
+	}
+	
+	if(aux[0] == 0 && aux[1] == 0){ 
+		//esto sería si un fantasma come a un racman, hay que controlarlo antes
+		//no debería entrar nunca aquí
+		return better_movs;
+	}
+
+	int algun_cero = 0;
+
+	for(i = 0; i < 3; i++ ){
+		if( algun_cero == 1) //si alguno de los valores es cero ya se han rellenado todos
+			break;
+		switch (i)
+		{
+			case 0:
+				if(fabs(aux[0]) >= fabs(aux[1])){ //mov horizontal
+					if(aux[0] > 0){ //derecha
+						better_movs[i] = 2;
+					}else { //izquierda
+						better_movs[i] = 1;
+					}
+				}else{		
+					if(aux[1] > 0){ //abajo
+						better_movs[i] = 3;
+					}else { //arriba
+						better_movs[i] = 0;
+					}
+				}
+				break;
+			case 1: //misma comprobación que antes pero ahora con el otro eje
+				if(fabs(aux[0]) >= fabs(aux[1])){
+					if(aux[1] > 0){
+						better_movs[i] = 3;
+					}else if (aux[1] < 0){
+						better_movs[i] = 0;
+					}else{ //en caso de ser cero, lo movemos en el otro eje
+						srand(time(NULL));
+						int num = rand();
+  						num=rand()%2;
+	
+						if (num){
+							better_movs[i] = 0;
+							better_movs[i+1] = 3;
+
+						}else{
+							better_movs[i] = 3;
+							better_movs[i+1] = 0;
+							
+						}	
+						if(aux[0] > 0){
+							better_movs[3] = 1; 
+						}else{
+							better_movs[3] = 2;
+						}
+					}
+				}else{		
+					if(aux[0] > 0){
+						better_movs[i] = 2;
+					}else if (aux[0] < 0){
+						better_movs[i] = 1;
+					}else{ //en caso de ser cero, lo movemos en el otro eje
+						srand(time(NULL));
+						int num = rand();
+  						num=rand()%2;
+	
+						if (num){
+							better_movs[i] = 2;
+							better_movs[i+1] = 1;
+
+						}else{
+							better_movs[i] = 2;
+							better_movs[i+1] = 1;
+							
+						}	
+						if(aux[1] > 0){
+							better_movs[3] = 0; 
+						}else{
+							better_movs[3] = 3;
+						}
+					}
+				algun_cero = 1;
+				break;
+
+			default:
+				//una vez puestos los dos mejores, de forma "aleatoria" se ponen los otros dos
+				better_movs[2] = (better_movs[0] * better_movs[1]) % 4;
+				better_movs[3] = 6 - better_movs[0] - better_movs[1] - better_movs[2];
+				
+				break;
+		}
+	}
+
+	return better_movs;
 }
 
 
@@ -613,22 +715,3 @@ int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i){
 	}
 	return 1;
 }
-
-
-void mapaPorConsola(int map[16][20]){
-	int i, j;
-	for (i = 0; i<320/16; i++){
-		for (j = 0; j<240/16; j++){
-
-			printf("%i ", mapa[j][i]);
-
-		}
-		printf("\n");
-	}
-}
-
-
-
-
-
-
