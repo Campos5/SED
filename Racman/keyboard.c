@@ -273,14 +273,15 @@ void realizar_movimiento(){
 			fin_partida = 0;
 	}
 	if(tipo_juego == 1){
-		if(jugador == 1){
+		/*if(jugador == 1){
 			comproar_mov_fantasma();
 			if(comido == 1)
 				mover = -1;
 		}
 		
 		int direccion_enemigo = envios_uart(mover);
-/*
+		*/
+
 		if(mover == 1){
 
 			Uart_SendByte(direccion_racman_propio);
@@ -293,7 +294,7 @@ void realizar_movimiento(){
 
 		//TODO mandar posición de los fantasmas si es el jugador 1
 		//TODO mandar los puntos
-
+		int direccion_enemigo;
 		char str[1];
 		char *pt_str = str;
 		while(1){
@@ -311,7 +312,7 @@ void realizar_movimiento(){
 			puntos_jugador_2 = puntos_jugador;
 			puntos_jugador_1 = 5; //TODO
 		}
-*/
+
 		if(direccion_enemigo == -1){
 			//poner -1 a las posiciones y eliminar los pixels del enemigo
 			limpiar_pixels(pos_racman_enemigo_x, pos_racman_enemigo_y);
@@ -812,8 +813,8 @@ int envios_uart(int mover){
 	int i;
 	int direccion_enemigo;
 	if (jugador == 1){
-		char recepcion[3];
-		char envio[11];
+		char* recepcion[3];
+		char* envio[11];
 
 
 		if(mover == 1){
@@ -831,7 +832,7 @@ int envios_uart(int mover){
 		}
 		envio[10] = 'f';
 
-		Uart_SendByte(*envio);
+		Uart_SendString(envio);
 		char *pt_str = recepcion;
 		i = 0;
 		while(1){
@@ -864,7 +865,7 @@ int envios_uart(int mover){
 
 		envio[2] = 'f';
 
-		Uart_SendByte(*envio);
+		Uart_SendString(*envio);
 		char *pt_str = recepcion;
 		i = 0;
 		while(1){

@@ -91,7 +91,7 @@ void Uart_SendByte(int data)
 void Uart_SendString(char *pt)
 {
     while (*pt)						    // mandar byte a byte hasta completar string
-	Uart_SendByte(*pt++);
+    	Uart_SendByte(*pt++);
 }
 
 void Uart_Printf(char *fmt,...)
