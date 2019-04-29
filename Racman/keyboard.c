@@ -50,7 +50,7 @@ int comprobar_mov_propio(int direccion);
 int comprobar_mov_enemigo(int direccion);
 void comproar_mov_fantasma();
 int envios_uart(int mover);
-int fantasma_come(int racmanX, int racmanY); //devuelve 1 si el fantasma come
+int fantasma_come(int racmanX, int racmanY, int fantasmaX, int fantasmaY); //devuelve 1 si el fantasma come
 int quedan_puntos();
 void fin_de_partida(int gana);
 int* obtener_mejorer_movimientos(int racmanX, int racmanY, int fantasmaX, int fantasmaY, int better_movs[]);
@@ -224,6 +224,7 @@ void realizar_movimiento(){
 	int x_ant = pos_racman_propio_x;
 	int y_ant = pos_racman_propio_y;
 
+	int fin_partida = -1;
 	int mover = 0;
 
 	mover = comprobar_mov_propio(direccion_racman_propio);
@@ -254,7 +255,7 @@ void realizar_movimiento(){
 
 	}else{
 		if(tipo_juego == 0){
-			fin_de_partida(0);
+			fin_partida = 0;
 		}else{
 			mapa[pos_racman_propio_y][pos_racman_propio_x] -= 0;
 			limpiar_pixels(pos_racman_propio_x, pos_racman_propio_y);
@@ -268,6 +269,8 @@ void realizar_movimiento(){
 
 	if(tipo_juego == 0){
 		comproar_mov_fantasma();
+		if(comido == 1)
+			fin_partida = 0;
 	}
 	if(tipo_juego == 1){
 		if(jugador == 1){
@@ -335,10 +338,16 @@ void realizar_movimiento(){
 	}
 
 	if(quedan_puntos() == 0){
-		fin_de_partida(1);
+		fin_partida = 1;
 	}
 
-	lanzarTimer(0);
+	if(fin_partida == -1){
+		lanzarTimer(0);
+
+	}else{
+		fin_de_partida(fin_partida);
+	}
+
 
 }
 
@@ -355,9 +364,9 @@ int comprobar_mov_propio(int direccion){
 
 					puntos_jugador += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3*jugador;
 					
-					if(fantasma_come(pos_racman_propio_x, pos_racman_propio_y - 1, -1, -1)){
-						return -1;
-					}
+				}
+				if(fantasma_come(pos_racman_propio_x, pos_racman_propio_y - 1, -1, -1)){
+					return -1;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
@@ -378,10 +387,10 @@ int comprobar_mov_propio(int direccion){
 					
 					puntos_jugador += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3*jugador;
 
-					if(fantasma_come(pos_racman_propio_x - 1, pos_racman_propio_y, -1, -1)){
-						return -1;
-					}
 					
+				}
+				if(fantasma_come(pos_racman_propio_x - 1, pos_racman_propio_y, -1, -1)){
+					return -1;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
@@ -404,9 +413,10 @@ int comprobar_mov_propio(int direccion){
 
 					puntos_jugador += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3*jugador;
 				
-					if(fantasma_come(pos_racman_propio_x + 1, pos_racman_propio_y, -1, -1)){
-						return -1;
-					}
+				}
+
+				if(fantasma_come(pos_racman_propio_x + 1, pos_racman_propio_y, -1, -1)){
+					return -1;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
@@ -429,9 +439,9 @@ int comprobar_mov_propio(int direccion){
 
 					puntos_jugador += mapa[pos_racman_propio_y][pos_racman_propio_x] - 3*jugador;
 				
-					if(fantasma_come(pos_racman_propio_x, pos_racman_propio_y + 1, -1, -1)){
-						return -1;
-					}
+				}
+				if(fantasma_come(pos_racman_propio_x, pos_racman_propio_y + 1, -1, -1)){
+					return -1;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
@@ -542,7 +552,7 @@ void comproar_mov_fantasma(){
 				int distancia_propio = fabs(pos_racman_propio_x - i) + fabs(pos_racman_propio_y - j);
 				int distancia_enemigo = fabs(pos_racman_enemigo_x - i) + fabs(pos_racman_enemigo_y - j);
 
-				int* mejores_movimientos;
+				int* mejores_movimientos = (int *) malloc(sizeof(int) * 8);
 
 				if(distancia_enemigo > distancia_propio)
 					mejores_movimientos = obtener_mejorer_movimientos(pos_racman_propio_x, pos_racman_propio_y, i, j, mejores_movimientos);
@@ -559,25 +569,25 @@ void comproar_mov_fantasma(){
 					switch (mejores_movimientos[k])
 					{
 						case 0:
-							if(mapa[j-1][i] > -1){
+							if(mapa[j-1][i] > -1 && mapa[j-1][i] < 9){
 								movido = 1;
 								pos_fantasmas = mover_fantasma(i, j, 0, fantasma, pos_fantasmas);
 							}
 							break;
 						case 1:
-							if(mapa[j][i-1] > -1){
+							if(mapa[j][i-1] > -1 && mapa[j][i-1] < 9){
 								movido = 1;
 								pos_fantasmas = mover_fantasma(i, j, 1, fantasma, pos_fantasmas);
 							}
 							break;
 						case 2:
-							if(mapa[j][i+1] > -1){
+							if(mapa[j][i+1] > -1 && mapa[j][i+1] < 9){
 								movido = 1;
 								pos_fantasmas = mover_fantasma(i, j, 2, fantasma, pos_fantasmas);
 							}
 							break;
 						case 3:
-							if(mapa[j+1][i] > -1){
+							if(mapa[j+1][i] > -1 && mapa[j+1][i] < 9){
 								movido = 1;
 								pos_fantasmas = mover_fantasma(i, j, 3, fantasma, pos_fantasmas);
 							}
@@ -587,6 +597,7 @@ void comproar_mov_fantasma(){
 							break;
 					}
 				}
+				free(mejores_movimientos);
 				fantasma++;
 			}
 
@@ -896,11 +907,11 @@ int quedan_puntos(){
 	int fantasma = 0;
 	for (i = 0; i<320/16; i++){
 		for (j = 0; j<240/16; j++){
-			if(!mapa[j][i] % 3 && mapa[j][i] != -1)
-				return 0;
+			if(!(mapa[j][i] % 3) && mapa[j][i] != -1)
+				return 1;
 		}
 	}
-	return 1;
+	return 0;
 
 }
 

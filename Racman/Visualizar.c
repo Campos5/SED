@@ -259,7 +259,7 @@ void init_visualizacion(void){
 
 	lcd_puts_x2( 0, 20, BLACK, "     RAC-MAN     " );
 	lcd_puts( 0, 60, BLACK, "   Pulsa Boton Izquierdo para jugar solo   " );
-	lcd_puts( 0, 100, BLACK, "   o el Derecho para jugar contra otro jugador   " );
+	lcd_puts( 0, 100, BLACK, "o el Derecho para jugar contra otro jugador" );
 
 }
 
@@ -268,7 +268,7 @@ void cargar_pantalla_carga(void){
 
 	lcd_clear();
 	lcd_puts_x2( 0, 20, BLACK, " Listo para empezar " );
-	lcd_puts( 0, 60, BLACK, "   Pulsa Boton Derecho empezar   ");
+	lcd_puts( 0, 60, BLACK, "Pulsa Boton Derecho empezar");
 }
 
 
@@ -278,7 +278,7 @@ void pantalla_fin_juego_solitario(int gana){
 		lcd_puts_x2( 0, 20, BLACK, "      ENHORABUENA       " );
 
 	}else{
-		lcd_puts_x2( 0, 20, BLACK, "UNLUKY, OTRA VEZ SERA" );
+		lcd_puts_x2( 0, 20, BLACK, "UNLUKY,OTRA VEZ SERA" );
 
 	}
 	//TODO saber como concatenar strings en C
