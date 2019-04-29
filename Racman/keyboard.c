@@ -38,19 +38,22 @@ int puntos_jugador;
 
 extern int tipo_juego;
 int comido;
+int fantasmas[8];
+
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));
-
 
 
 void realizar_movimiento();
 int comprobar_mov_propio(int direccion);
 int comprobar_mov_enemigo(int direccion);
 void comproar_mov_fantasma();
+int envios_uart(int mover);
 int fantasma_come(int racmanX, int racmanY); //devuelve 1 si el fantasma come
+int quedan_puntos();
 void fin_de_partida(int gana);
-int* obtener_mejorer_movimientos(int racmanX, int racmanY, int fantasmaX, int fantasmaY);
+int* obtener_mejorer_movimientos(int racmanX, int racmanY, int fantasmaX, int fantasmaY, int better_movs[]);
 int* mover_fantasma(int x, int y, int direccion, int f, int movs[]);
 int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i);
 
@@ -272,8 +275,9 @@ void realizar_movimiento(){
 			if(comido == 1)
 				mover = -1;
 		}
-
-		//todo mandar y recibir información de la uart
+		
+		int direccion_enemigo = envios_uart(mover);
+/*
 		if(mover == 1){
 
 			Uart_SendByte(direccion_racman_propio);
@@ -283,7 +287,6 @@ void realizar_movimiento(){
 		}else{ //cuando mover es -1, racman ha muerto
 			Uart_SendByte(mover); 
 		}
-		int direccion_enemigo;
 
 		//TODO mandar posición de los fantasmas si es el jugador 1
 		//TODO mandar los puntos
@@ -305,7 +308,7 @@ void realizar_movimiento(){
 			puntos_jugador_2 = puntos_jugador;
 			puntos_jugador_1 = 5; //TODO
 		}
-
+*/
 		if(direccion_enemigo == -1){
 			//poner -1 a las posiciones y eliminar los pixels del enemigo
 			limpiar_pixels(pos_racman_enemigo_x, pos_racman_enemigo_y);
@@ -331,7 +334,9 @@ void realizar_movimiento(){
 
 	}
 
-	//mapaPorConsola(mapa);
+	if(quedan_puntos() == 0){
+		fin_de_partida(1);
+	}
 
 	lanzarTimer(0);
 
@@ -533,8 +538,18 @@ void comproar_mov_fantasma(){
 
 			int check = comprobarFantasmaMovido(pos_fantasmas, j, i);
 			if(mapa[j][i] > 8 && mapa[j][i] < 12 && check != 0){
-				 
-				int* mejores_movimientos = obtener_mejorer_movimientos(pos_racman_propio_x, pos_racman_propio_y, i, j);
+				
+				int distancia_propio = fabs(pos_racman_propio_x - i) + fabs(pos_racman_propio_y - j);
+				int distancia_enemigo = fabs(pos_racman_enemigo_x - i) + fabs(pos_racman_enemigo_y - j);
+
+				int* mejores_movimientos;
+
+				if(distancia_enemigo > distancia_propio)
+					mejores_movimientos = obtener_mejorer_movimientos(pos_racman_propio_x, pos_racman_propio_y, i, j, mejores_movimientos);
+				else
+					mejores_movimientos = obtener_mejorer_movimientos(pos_racman_enemigo_x, pos_racman_enemigo_y, i, j, mejores_movimientos);
+					
+
 				int k;
 				int movido = 0; //1 si se ha movido
 				for(k = 0; k < 4; k++){
@@ -582,10 +597,8 @@ void comproar_mov_fantasma(){
 
 }
 
-int* obtener_mejorer_movimientos(int racmanX, int racmanY, int fantasmaX, int fantasmaY){
+int* obtener_mejorer_movimientos(int racmanX, int racmanY, int fantasmaX, int fantasmaY, int better_movs[8]){
 	
-
-	int* better_movs  = (int *) malloc(sizeof(int) * 4);
 	int aux[2] = {racmanX - fantasmaX, racmanY - fantasmaY};
 
 	int i;
@@ -599,7 +612,6 @@ int* obtener_mejorer_movimientos(int racmanX, int racmanY, int fantasmaX, int fa
 		//no debería entrar nunca aquí
 		return better_movs;
 	}
-
 	int algun_cero = 0;
 
 	for(i = 0; i < 3; i++ ){
@@ -766,6 +778,11 @@ int* mover_fantasma(int x, int y, int direccion, int f, int movs[]){
 			break;
 
 	}
+	int i;
+	if(movs[7] != -1)
+		for(i = 0; i < 8; i++)
+			fantasmas[i] = movs[i];
+	
 	return movs;
 
 }
@@ -779,6 +796,88 @@ int comprobarFantasmaMovido(int pos_fantasmas[], int j, int i){
 	return 1;
 }
 
+int envios_uart(int mover){
+	
+	int i;
+	int direccion_enemigo;
+	if (jugador == 1){
+		char recepcion[3];
+		char envio[11];
+
+
+		if(mover == 1){
+			envio[0] = direccion_racman_propio;
+		}else if (mover == 0){
+			envio[0] = direccion_defecto_propio;
+		
+		}else{ //cuando mover es -1, racman ha muerto
+			envio[0] = -1;		
+		}
+		envio[1] = puntos_jugador; 
+		
+		for(i = 0; i < 8; i++){
+			envio[i+2] = fantasmas[i];
+		}
+		envio[10] = 'f';
+
+		Uart_SendByte(*envio);
+		char *pt_str = recepcion;
+		i = 0;
+		while(1){
+			//TODO dibujar fantasmas y actualizar el mapa si es el jugador 2
+			*pt_str = Uart_Getch(); // leer caracter
+			if(*pt_str == 'f')
+				break;
+			recepcion[i] = *pt_str;
+			i++;
+			pt_str = recepcion;
+		}
+		//TODO leer los puntos de cada jugador
+		puntos_jugador_1 = puntos_jugador;
+		puntos_jugador_2 = recepcion[1];
+		
+		direccion_enemigo = recepcion[0];
+
+	}else{
+		char recepcion[11];
+		char envio[3];
+
+		if(mover == 1){
+			envio[0] = direccion_racman_propio;
+		}else if (mover == 0){
+			envio[0] = direccion_defecto_propio;
+		}else{ //cuando mover es -1, racman ha muerto
+			envio[0] = -1;		
+		}
+		envio[1] = puntos_jugador;
+
+		envio[2] = 'f';
+
+		Uart_SendByte(*envio);
+		char *pt_str = recepcion;
+		i = 0;
+		while(1){
+			//TODO dibujar fantasmas y actualizar el mapa si es el jugador 2
+			*pt_str = Uart_Getch(); // leer caracter
+			if(*pt_str == 'f')
+				break;
+			recepcion[i] = *pt_str;
+			i++;
+			pt_str = recepcion;
+		}
+		//TODO leer los puntos de cada jugador
+		puntos_jugador_2 = puntos_jugador;
+		puntos_jugador_1 = recepcion[1];
+		
+		direccion_enemigo = recepcion[0];
+		for(i = 2; i < 6; i += 2){
+			mapa[recepcion[i]][recepcion[i+1]] += 9;
+		}
+	}
+	
+	return direccion_enemigo;
+}
+
 int fantasma_come(int racmanX, int racmanY, int fantasmaX, int fantasmaY){
 	//TODO
 	if(fantasmaX == -1){
@@ -789,6 +888,19 @@ int fantasma_come(int racmanX, int racmanY, int fantasmaX, int fantasmaY){
 			return 1;
 	}
 	return 0;
+
+}
+
+int quedan_puntos(){
+	int i, j;
+	int fantasma = 0;
+	for (i = 0; i<320/16; i++){
+		for (j = 0; j<240/16; j++){
+			if(!mapa[j][i] % 3 && mapa[j][i] != -1)
+				return 0;
+		}
+	}
+	return 1;
 
 }
 
