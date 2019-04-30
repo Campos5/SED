@@ -926,7 +926,7 @@ void fin_de_partida(int gana){
 	if( tipo_juego == 0){
 		pantalla_en_negro();
 		DelayMs(1000);
-		pantalla_fin_juego_solitario(gana);
+		pantalla_fin_juego_solitario(gana, puntos_jugador_1);
 		
 	}else{
 		pantalla_en_negro();

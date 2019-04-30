@@ -2,6 +2,8 @@
 #include "44blib.h"
 #include "44b.h"
 #include "def.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 
@@ -258,8 +260,8 @@ void init_visualizacion(void){
 	lcd_clear();
 
 	lcd_puts_x2( 0, 20, BLACK, "     RAC-MAN     " );
-	lcd_puts( 0, 60, BLACK, "   Pulsa Boton Izquierdo para jugar solo   " );
-	lcd_puts( 0, 100, BLACK, "o el Derecho para jugar contra otro jugador" );
+	lcd_puts( 0, 60, BLACK, "   Pulsa Boton Izquierdo para 1 jugador   " );
+	lcd_puts( 0, 100, BLACK, "   Pulsa Boton Derecho para 2 jugadores  " );
 
 }
 
@@ -272,17 +274,19 @@ void cargar_pantalla_carga(void){
 }
 
 
-void pantalla_fin_juego_solitario(int gana){
+void pantalla_fin_juego_solitario(int gana, int puntos){
 	lcd_clear();
 	if(gana){
 		lcd_puts_x2( 0, 20, BLACK, "      ENHORABUENA       " );
 
 	}else{
-		lcd_puts_x2( 0, 20, BLACK, "UNLUKY,OTRA VEZ SERA" );
+		lcd_puts_x2( 0, 20, BLACK, "UNLUKY,OTRA VEZ SERA");
 
 	}
 	//TODO saber como concatenar strings en C
-	lcd_puts( 0, 60, BLACK, "Has acabado con puntos");
+	char str[80];
+	sprintf(str, "Has obtenido %d puntos", puntos);
+	lcd_puts( 0, 60, BLACK, str);
 }
 
 void pantalla_fin_juego_doble(int puntos1, int puntos2){
