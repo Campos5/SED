@@ -283,10 +283,10 @@ void pantalla_fin_juego_solitario(int gana, int puntos){
 		lcd_puts_x2( 0, 20, BLACK, "UNLUKY,OTRA VEZ SERA");
 
 	}
-	//TODO saber como concatenar strings en C
-	char str[80];
-	sprintf(str, "Has obtenido %d puntos", puntos);
-	lcd_puts( 0, 60, BLACK, str);
+
+	char strPuntos[80];
+	sprintf(strPuntos, "Has obtenido %d puntos", puntos);
+	lcd_puts( 0, 60, BLACK, strPuntos);
 }
 
 void pantalla_fin_juego_doble(int puntos1, int puntos2){
@@ -300,10 +300,13 @@ void pantalla_fin_juego_doble(int puntos1, int puntos2){
 	}else{
 		lcd_puts_x2( 0, 20, BLACK, "HAY EMPATE, INCREIBLE" );
 	}
-	
-	//TODO saber como concatenar strings en C
-	lcd_puts( 0, 60, BLACK, "Jugador 1:  puntos");
-	lcd_puts( 0, 80, BLACK, "Jugador 2:  puntos");
+	char strPuntos1[80];
+	char strPuntos2[80];
+	sprintf(strPuntos1, "Jugador 1: %d puntos", puntos1);
+	sprintf(strPuntos2, "Jugador 2: %d puntos", puntos2);
+
+	lcd_puts( 0, 60, BLACK, strPuntos1);
+	lcd_puts( 0, 80, BLACK, strPuntos2);
 
 }
 

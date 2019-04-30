@@ -16,6 +16,7 @@ int jugador;
 
 
 int tipo_juego;
+int salir_juego;
 
 int puntos_jugador_1;
 int puntos_jugador_2;
@@ -58,5 +59,6 @@ void Main(void){
 		pt_str = str;
 	}
 
-	while(1);
+	while(salir_juego == 0);
+
 }
