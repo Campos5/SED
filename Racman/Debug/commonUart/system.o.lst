@@ -1,0 +1,441 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 18, 4
+  11              		.file	"system.c"
+  21              	.Ltext0:
+  22              		.file 1 "../commonUart/system.c"
+ 1768              		.align	2
+ 1771              	clk_normal:
+ 1772 0000 00127A00 		.word	8000000
+ 1773              		.align	2
+ 1776              	clk_slow:
+ 1777 0004 00127A00 		.word	8000000
+ 1778              		.global	mclk
+ 1779              		.align	2
+ 1782              	mclk:
+ 1783 0008 00127A00 		.word	8000000
+ 1784              		.text
+ 1785              		.align	2
+ 1786              		.global	DelayMs
+ 1788              	DelayMs:
+ 1789              	.LFB0:
+   1:../commonUart/system.c **** /*
+   2:../commonUart/system.c ****  * system.c
+   3:../commonUart/system.c **** 
+   4:../commonUart/system.c ****  *
+   5:../commonUart/system.c ****  *  Created on: 14/03/2014
+   6:../commonUart/system.c ****  *      Author: Alberto
+   7:../commonUart/system.c ****  */
+   8:../commonUart/system.c **** 
+   9:../commonUart/system.c **** #include "s3c44b0x.h"
+  10:../commonUart/system.c **** #include "s3cev40.h"
+  11:../commonUart/system.c **** #include "common_types.h"
+  12:../commonUart/system.c **** #include "system.h"
+  13:../commonUart/system.c **** 
+  14:../commonUart/system.c **** static uint32 clk_normal = CLKIN;  // Frecuencia en modo normal (Hz)
+  15:../commonUart/system.c **** static uint32 clk_slow = CLKIN;	   // Frecuencia en modo slow (Hz)
+  16:../commonUart/system.c **** uint32 mclk = CLKIN;			   // Frecuencia actual del reloj (Hz)
+  17:../commonUart/system.c **** 
+  18:../commonUart/system.c **** void DelayMs(int ms_time)
+  19:../commonUart/system.c **** {
+ 1790              		.loc 1 19 0
+ 1791              		.cfi_startproc
+ 1792              		@ Function supports interworking.
+ 1793              		@ args = 0, pretend = 0, frame = 16
+ 1794              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1795 0000 0DC0A0E1 		mov	ip, sp
+ 1796              	.LCFI0:
+ 1797              		.cfi_def_cfa_register 12
+ 1798 0004 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1799 0008 04B04CE2 		sub	fp, ip, #4
+ 1800              		.cfi_offset 14, -8
+ 1801              		.cfi_offset 13, -12
+ 1802              		.cfi_offset 11, -16
+ 1803              	.LCFI1:
+ 1804              		.cfi_def_cfa 11, 4
+ 1805 000c 10D04DE2 		sub	sp, sp, #16
+ 1806 0010 18000BE5 		str	r0, [fp, #-24]
+  20:../commonUart/system.c **** 	int i;
+  21:../commonUart/system.c **** 
+  22:../commonUart/system.c **** 	for( i = 0 ; i < 1000*ms_time ; i++ )
+ 1807              		.loc 1 22 0
+ 1808 0014 0030A0E3 		mov	r3, #0
+ 1809 0018 10300BE5 		str	r3, [fp, #-16]
+ 1810 001c 020000EA 		b	.L2
+ 1811              	.L3:
+ 1812              		.loc 1 22 0 is_stmt 0 discriminator 2
+ 1813 0020 10301BE5 		ldr	r3, [fp, #-16]
+ 1814 0024 013083E2 		add	r3, r3, #1
+ 1815 0028 10300BE5 		str	r3, [fp, #-16]
+ 1816              	.L2:
+ 1817              		.loc 1 22 0 discriminator 1
+ 1818 002c 18201BE5 		ldr	r2, [fp, #-24]
+ 1819 0030 0230A0E1 		mov	r3, r2
+ 1820 0034 8332A0E1 		mov	r3, r3, asl #5
+ 1821 0038 033062E0 		rsb	r3, r2, r3
+ 1822 003c 0331A0E1 		mov	r3, r3, asl #2
+ 1823 0040 023083E0 		add	r3, r3, r2
+ 1824 0044 8331A0E1 		mov	r3, r3, asl #3
+ 1825 0048 0320A0E1 		mov	r2, r3
+ 1826 004c 10301BE5 		ldr	r3, [fp, #-16]
+ 1827 0050 030052E1 		cmp	r2, r3
+ 1828 0054 F1FFFFCA 		bgt	.L3
+  23:../commonUart/system.c **** 		;
+  24:../commonUart/system.c **** }
+ 1829              		.loc 1 24 0 is_stmt 1
+ 1830 0058 0CD04BE2 		sub	sp, fp, #12
+ 1831 005c 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1832 0060 1EFF2FE1 		bx	lr
+ 1833              		.cfi_endproc
+ 1834              	.LFE0:
+ 1836              		.align	2
+ 1837              		.global	sys_init
+ 1839              	sys_init:
+ 1840              	.LFB1:
+  25:../commonUart/system.c **** 
+  26:../commonUart/system.c **** void sys_init( void )
+  27:../commonUart/system.c **** {
+ 1841              		.loc 1 27 0
+ 1842              		.cfi_startproc
+ 1843              		@ Function supports interworking.
+ 1844              		@ args = 0, pretend = 0, frame = 0
+ 1845              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1846 0064 0DC0A0E1 		mov	ip, sp
+ 1847              	.LCFI2:
+ 1848              		.cfi_def_cfa_register 12
+ 1849 0068 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1850 006c 04B04CE2 		sub	fp, ip, #4
+ 1851              		.cfi_offset 14, -8
+ 1852              		.cfi_offset 13, -12
+ 1853              		.cfi_offset 11, -16
+ 1854              	.LCFI3:
+ 1855              		.cfi_def_cfa 11, 4
+  28:../commonUart/system.c **** 	WTCON  = 0;				// deshabilita el watchdog
+ 1856              		.loc 1 28 0
+ 1857 0070 E0309FE5 		ldr	r3, .L5
+ 1858 0074 0020A0E3 		mov	r2, #0
+ 1859 0078 002083E5 		str	r2, [r3, #0]
+  29:../commonUart/system.c **** 	INTMSK = ~0;			// enmascara todas las interrupciones
+ 1860              		.loc 1 29 0
+ 1861 007c D8309FE5 		ldr	r3, .L5+4
+ 1862 0080 0020E0E3 		mvn	r2, #0
+ 1863 0084 002083E5 		str	r2, [r3, #0]
+  30:../commonUart/system.c **** 
+  31:../commonUart/system.c **** 	// Configuracion del gestor de reloj
+  32:../commonUart/system.c **** 	LOCKTIME   = 0xfff;		// estabilización del PLL = 512 us
+ 1864              		.loc 1 32 0
+ 1865 0088 D0309FE5 		ldr	r3, .L5+8
+ 1866 008c D0209FE5 		ldr	r2, .L5+12
+ 1867 0090 002083E5 		str	r2, [r3, #0]
+  33:../commonUart/system.c **** 	PLLCON     = 0x38021;	// MCLK = 64MHz
+ 1868              		.loc 1 33 0
+ 1869 0094 7637A0E3 		mov	r3, #30932992
+ 1870 0098 C8209FE5 		ldr	r2, .L5+16
+ 1871 009c 002083E5 		str	r2, [r3, #0]
+  34:../commonUart/system.c **** 	clk_normal = 64000000;
+ 1872              		.loc 1 34 0
+ 1873 00a0 C4309FE5 		ldr	r3, .L5+20
+ 1874 00a4 C4209FE5 		ldr	r2, .L5+24
+ 1875 00a8 002083E5 		str	r2, [r3, #0]
+  35:../commonUart/system.c **** 	CLKSLOW    = 0x8;		// MCLK_SLOW = 500 KHz
+ 1876              		.loc 1 35 0
+ 1877 00ac C0309FE5 		ldr	r3, .L5+28
+ 1878 00b0 0820A0E3 		mov	r2, #8
+ 1879 00b4 002083E5 		str	r2, [r3, #0]
+  36:../commonUart/system.c **** 	clk_slow   = 500000;
+ 1880              		.loc 1 36 0
+ 1881 00b8 B8309FE5 		ldr	r3, .L5+32
+ 1882 00bc B8209FE5 		ldr	r2, .L5+36
+ 1883 00c0 002083E5 		str	r2, [r3, #0]
+  37:../commonUart/system.c **** 	CLKCON     = (1<<10) | (1<<7); 	// modo NORMAL y todos los controladores desactivados menos el BDM
+ 1884              		.loc 1 37 0
+ 1885 00c4 B4309FE5 		ldr	r3, .L5+40
+ 1886 00c8 122DA0E3 		mov	r2, #1152
+ 1887 00cc 002083E5 		str	r2, [r3, #0]
+  38:../commonUart/system.c **** 	mclk       = clk_normal;
+ 1888              		.loc 1 38 0
+ 1889 00d0 94309FE5 		ldr	r3, .L5+20
+ 1890 00d4 002093E5 		ldr	r2, [r3, #0]
+ 1891 00d8 A4309FE5 		ldr	r3, .L5+44
+ 1892 00dc 002083E5 		str	r2, [r3, #0]
+  39:../commonUart/system.c **** 
+  40:../commonUart/system.c **** 	// Configuracion del arbitro de bus
+  41:../commonUart/system.c **** 	SBUSCON = 0x8000001b;	// prioridad fija por defecto LCD > ZDMA > BDMA > IRQ
+ 1893              		.loc 1 41 0
+ 1894 00e0 7137A0E3 		mov	r3, #29622272
+ 1895 00e4 6E21A0E3 		mov	r2, #-2147483621
+ 1896 00e8 002083E5 		str	r2, [r3, #0]
+  42:../commonUart/system.c **** 
+  43:../commonUart/system.c **** 	// Configuracion de cache
+  44:../commonUart/system.c **** 	SYSCFG = 0;				// deshabilitada
+ 1897              		.loc 1 44 0
+ 1898 00ec 0735A0E3 		mov	r3, #29360128
+ 1899 00f0 0020A0E3 		mov	r2, #0
+ 1900 00f4 002083E5 		str	r2, [r3, #0]
+  45:../commonUart/system.c **** 
+  46:../commonUart/system.c **** 	// Configuacion del controlador de interrupciones
+  47:../commonUart/system.c **** 	I_PMST = 0x1f1b;		// prioridades fijas por defecto
+ 1901              		.loc 1 47 0
+ 1902 00f8 88309FE5 		ldr	r3, .L5+48
+ 1903 00fc 88209FE5 		ldr	r2, .L5+52
+ 1904 0100 002083E5 		str	r2, [r3, #0]
+  48:../commonUart/system.c **** 	I_PSLV = 0x1b1b1b1b;
+ 1905              		.loc 1 48 0
+ 1906 0104 84309FE5 		ldr	r3, .L5+56
+ 1907 0108 84209FE5 		ldr	r2, .L5+60
+ 1908 010c 002083E5 		str	r2, [r3, #0]
+  49:../commonUart/system.c **** 	INTMOD = 0;				// todas las interrupciones en modo IRQ
+ 1909              		.loc 1 49 0
+ 1910 0110 80309FE5 		ldr	r3, .L5+64
+ 1911 0114 0020A0E3 		mov	r2, #0
+ 1912 0118 002083E5 		str	r2, [r3, #0]
+  50:../commonUart/system.c **** 	EXTINTPND = ~0;			// borra las interrupciones externas pendientes por linea EINT7..4
+ 1913              		.loc 1 50 0
+ 1914 011c 78309FE5 		ldr	r3, .L5+68
+ 1915 0120 0020E0E3 		mvn	r2, #0
+ 1916 0124 002083E5 		str	r2, [r3, #0]
+  51:../commonUart/system.c ****     I_ISPC = ~0;			// borra todas las interrupciones pendientes
+ 1917              		.loc 1 51 0
+ 1918 0128 70309FE5 		ldr	r3, .L5+72
+ 1919 012c 0020E0E3 		mvn	r2, #0
+ 1920 0130 002083E5 		str	r2, [r3, #0]
+  52:../commonUart/system.c **** 	INTCON = 1;				// IRQ vectorizadas, linea IRQ activada, linea FIQ desactivada
+ 1921              		.loc 1 52 0
+ 1922 0134 1E36A0E3 		mov	r3, #31457280
+ 1923 0138 0120A0E3 		mov	r2, #1
+ 1924 013c 002083E5 		str	r2, [r3, #0]
+  53:../commonUart/system.c **** 
+  54:../commonUart/system.c **** 	// Configuracion de puertos
+  55:../commonUart/system.c **** 	port_init();
+ 1925              		.loc 1 55 0
+ 1926 0140 5C309FE5 		ldr	r3, .L5+76
+ 1927 0144 0FE0A0E1 		mov	lr, pc
+ 1928 0148 13FF2FE1 		bx	r3
+  56:../commonUart/system.c **** }
+ 1929              		.loc 1 56 0
+ 1930 014c 0CD04BE2 		sub	sp, fp, #12
+ 1931 0150 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1932 0154 1EFF2FE1 		bx	lr
+ 1933              	.L6:
+ 1934              		.align	2
+ 1935              	.L5:
+ 1936 0158 0000D301 		.word	30605312
+ 1937 015c 0C00E001 		.word	31457292
+ 1938 0160 0C00D801 		.word	30933004
+ 1939 0164 FF0F0000 		.word	4095
+ 1940 0168 21800300 		.word	229409
+ 1941 016c 00000000 		.word	clk_normal
+ 1942 0170 0090D003 		.word	64000000
+ 1943 0174 0800D801 		.word	30933000
+ 1944 0178 04000000 		.word	clk_slow
+ 1945 017c 20A10700 		.word	500000
+ 1946 0180 0400D801 		.word	30932996
+ 1947 0184 00000000 		.word	mclk
+ 1948 0188 1400E001 		.word	31457300
+ 1949 018c 1B1F0000 		.word	7963
+ 1950 0190 1000E001 		.word	31457296
+ 1951 0194 1B1B1B1B 		.word	454761243
+ 1952 0198 0800E001 		.word	31457288
+ 1953 019c 5400D201 		.word	30539860
+ 1954 01a0 2400E001 		.word	31457316
+ 1955 01a4 00000000 		.word	port_init
+ 1956              		.cfi_endproc
+ 1957              	.LFE1:
+ 1959              		.align	2
+ 1960              		.global	port_init
+ 1962              	port_init:
+ 1963              	.LFB2:
+  57:../commonUart/system.c **** 
+  58:../commonUart/system.c **** 
+  59:../commonUart/system.c **** inline void port_init( void )
+  60:../commonUart/system.c **** {
+ 1964              		.loc 1 60 0
+ 1965              		.cfi_startproc
+ 1966              		@ Function supports interworking.
+ 1967              		@ args = 0, pretend = 0, frame = 0
+ 1968              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1969 01a8 0DC0A0E1 		mov	ip, sp
+ 1970              	.LCFI4:
+ 1971              		.cfi_def_cfa_register 12
+ 1972 01ac 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1973 01b0 04B04CE2 		sub	fp, ip, #4
+ 1974              		.cfi_offset 14, -8
+ 1975              		.cfi_offset 13, -12
+ 1976              		.cfi_offset 11, -16
+ 1977              	.LCFI5:
+ 1978              		.cfi_def_cfa 11, 4
+  61:../commonUart/system.c **** 
+  62:../commonUart/system.c **** 	PDATA = ~0;
+ 1979              		.loc 1 62 0
+ 1980 01b4 00319FE5 		ldr	r3, .L8
+ 1981 01b8 0020E0E3 		mvn	r2, #0
+ 1982 01bc 002083E5 		str	r2, [r3, #0]
+  63:../commonUart/system.c **** 	PCONA = (0x7f<<1);		// PA[7:1] = ADDR[22:16], resto = out
+ 1983              		.loc 1 63 0
+ 1984 01c0 F8309FE5 		ldr	r3, .L8+4
+ 1985 01c4 FE20A0E3 		mov	r2, #254
+ 1986 01c8 002083E5 		str	r2, [r3, #0]
+  64:../commonUart/system.c **** 
+  65:../commonUart/system.c **** 	PDATB = ~0;
+ 1987              		.loc 1 65 0
+ 1988 01cc F0309FE5 		ldr	r3, .L8+8
+ 1989 01d0 0020E0E3 		mvn	r2, #0
+ 1990 01d4 002083E5 		str	r2, [r3, #0]
+  66:../commonUart/system.c **** 	PCONB = (1<<8) | (1<<6) | (0xf);	// PA[8] = nGCS3, PA[6] = nGCS1, PA[3:0] = (nSRAS, nSCAS, SCLK, S
+ 1991              		.loc 1 66 0
+ 1992 01d8 E8309FE5 		ldr	r3, .L8+12
+ 1993 01dc E8209FE5 		ldr	r2, .L8+16
+ 1994 01e0 002083E5 		str	r2, [r3, #0]
+  67:../commonUart/system.c **** 
+  68:../commonUart/system.c **** 	PDATC = ~0;
+ 1995              		.loc 1 68 0
+ 1996 01e4 E4309FE5 		ldr	r3, .L8+20
+ 1997 01e8 0020E0E3 		mvn	r2, #0
+ 1998 01ec 002083E5 		str	r2, [r3, #0]
+  69:../commonUart/system.c **** 	PCONC = 0x55555555;		// PC[x] = out
+ 1999              		.loc 1 69 0
+ 2000 01f0 DC309FE5 		ldr	r3, .L8+24
+ 2001 01f4 DC209FE5 		ldr	r2, .L8+28
+ 2002 01f8 002083E5 		str	r2, [r3, #0]
+  70:../commonUart/system.c **** 	PUPC  = ~0;		 		// Pull-up disable
+ 2003              		.loc 1 70 0
+ 2004 01fc D8309FE5 		ldr	r3, .L8+32
+ 2005 0200 0020E0E3 		mvn	r2, #0
+ 2006 0204 002083E5 		str	r2, [r3, #0]
+  71:../commonUart/system.c **** 
+  72:../commonUart/system.c **** 	PDATD = ~0;
+ 2007              		.loc 1 72 0
+ 2008 0208 D0309FE5 		ldr	r3, .L8+36
+ 2009 020c 0020E0E3 		mvn	r2, #0
+ 2010 0210 002083E5 		str	r2, [r3, #0]
+  73:../commonUart/system.c **** 	PCOND = 0x5555;			// PD[x] = out
+ 2011              		.loc 1 73 0
+ 2012 0214 C8309FE5 		ldr	r3, .L8+40
+ 2013 0218 C8209FE5 		ldr	r2, .L8+44
+ 2014 021c 002083E5 		str	r2, [r3, #0]
+  74:../commonUart/system.c **** 	PUPD  = ~0;				// Pull-up disable
+ 2015              		.loc 1 74 0
+ 2016 0220 C4309FE5 		ldr	r3, .L8+48
+ 2017 0224 0020E0E3 		mvn	r2, #0
+ 2018 0228 002083E5 		str	r2, [r3, #0]
+  75:../commonUart/system.c **** 
+  76:../commonUart/system.c **** 	PDATE = ~0;
+ 2019              		.loc 1 76 0
+ 2020 022c BC309FE5 		ldr	r3, .L8+52
+ 2021 0230 0020E0E3 		mvn	r2, #0
+ 2022 0234 002083E5 		str	r2, [r3, #0]
+  77:../commonUart/system.c **** 	PCONE = 0x15555; 		// PE[x] = out
+ 2023              		.loc 1 77 0
+ 2024 0238 B4309FE5 		ldr	r3, .L8+56
+ 2025 023c B4209FE5 		ldr	r2, .L8+60
+ 2026 0240 002083E5 		str	r2, [r3, #0]
+  78:../commonUart/system.c **** 	PUPE  = ~0;		 		// Pull-up disable
+ 2027              		.loc 1 78 0
+ 2028 0244 B0309FE5 		ldr	r3, .L8+64
+ 2029 0248 0020E0E3 		mvn	r2, #0
+ 2030 024c 002083E5 		str	r2, [r3, #0]
+  79:../commonUart/system.c **** 
+  80:../commonUart/system.c **** 	PDATF = ~0;
+ 2031              		.loc 1 80 0
+ 2032 0250 A8309FE5 		ldr	r3, .L8+68
+ 2033 0254 0020E0E3 		mvn	r2, #0
+ 2034 0258 002083E5 		str	r2, [r3, #0]
+  81:../commonUart/system.c **** 	PCONF = 0x002555; 		// PF[8] = in, PF[7] = in, resto = out
+ 2035              		.loc 1 81 0
+ 2036 025c A0309FE5 		ldr	r3, .L8+72
+ 2037 0260 A0209FE5 		ldr	r2, .L8+76
+ 2038 0264 002083E5 		str	r2, [r3, #0]
+  82:../commonUart/system.c **** 	PUPF  = ~0;			 	// Pull-up disable
+ 2039              		.loc 1 82 0
+ 2040 0268 9C309FE5 		ldr	r3, .L8+80
+ 2041 026c 0020E0E3 		mvn	r2, #0
+ 2042 0270 002083E5 		str	r2, [r3, #0]
+  83:../commonUart/system.c **** 
+  84:../commonUart/system.c **** 	PDATG = ~0;
+ 2043              		.loc 1 84 0
+ 2044 0274 94309FE5 		ldr	r3, .L8+84
+ 2045 0278 0020E0E3 		mvn	r2, #0
+ 2046 027c 002083E5 		str	r2, [r3, #0]
+  85:../commonUart/system.c **** 	PCONG = 0x5555;			// PG[x] = out
+ 2047              		.loc 1 85 0
+ 2048 0280 8C309FE5 		ldr	r3, .L8+88
+ 2049 0284 5C209FE5 		ldr	r2, .L8+44
+ 2050 0288 002083E5 		str	r2, [r3, #0]
+  86:../commonUart/system.c **** 	PUPG  = ~0;		 		// Pull-up disable
+ 2051              		.loc 1 86 0
+ 2052 028c 84309FE5 		ldr	r3, .L8+92
+ 2053 0290 0020E0E3 		mvn	r2, #0
+ 2054 0294 002083E5 		str	r2, [r3, #0]
+  87:../commonUart/system.c **** 
+  88:../commonUart/system.c **** 	SPUCR = 0x7;			// DATA[15:0] Pull-up disable
+ 2055              		.loc 1 88 0
+ 2056 0298 7C309FE5 		ldr	r3, .L8+96
+ 2057 029c 0720A0E3 		mov	r2, #7
+ 2058 02a0 002083E5 		str	r2, [r3, #0]
+  89:../commonUart/system.c **** 
+  90:../commonUart/system.c **** 	EXTINT = 0x22222222;	// Falling edge triggered
+ 2059              		.loc 1 90 0
+ 2060 02a4 74309FE5 		ldr	r3, .L8+100
+ 2061 02a8 74209FE5 		ldr	r2, .L8+104
+ 2062 02ac 002083E5 		str	r2, [r3, #0]
+  91:../commonUart/system.c **** }
+ 2063              		.loc 1 91 0
+ 2064 02b0 0CD04BE2 		sub	sp, fp, #12
+ 2065 02b4 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 2066 02b8 1EFF2FE1 		bx	lr
+ 2067              	.L9:
+ 2068              		.align	2
+ 2069              	.L8:
+ 2070 02bc 0400D201 		.word	30539780
+ 2071 02c0 0000D201 		.word	30539776
+ 2072 02c4 0C00D201 		.word	30539788
+ 2073 02c8 0800D201 		.word	30539784
+ 2074 02cc 4F010000 		.word	335
+ 2075 02d0 1400D201 		.word	30539796
+ 2076 02d4 1000D201 		.word	30539792
+ 2077 02d8 55555555 		.word	1431655765
+ 2078 02dc 1800D201 		.word	30539800
+ 2079 02e0 2000D201 		.word	30539808
+ 2080 02e4 1C00D201 		.word	30539804
+ 2081 02e8 55550000 		.word	21845
+ 2082 02ec 2400D201 		.word	30539812
+ 2083 02f0 2C00D201 		.word	30539820
+ 2084 02f4 2800D201 		.word	30539816
+ 2085 02f8 55550100 		.word	87381
+ 2086 02fc 3000D201 		.word	30539824
+ 2087 0300 3800D201 		.word	30539832
+ 2088 0304 3400D201 		.word	30539828
+ 2089 0308 55250000 		.word	9557
+ 2090 030c 3C00D201 		.word	30539836
+ 2091 0310 4400D201 		.word	30539844
+ 2092 0314 4000D201 		.word	30539840
+ 2093 0318 4800D201 		.word	30539848
+ 2094 031c 4C00D201 		.word	30539852
+ 2095 0320 5000D201 		.word	30539856
+ 2096 0324 22222222 		.word	572662306
+ 2097              		.cfi_endproc
+ 2098              	.LFE2:
+ 2100              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 system.c
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1768   .data:00000000 $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1771   .data:00000000 clk_normal
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1776   .data:00000004 clk_slow
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1782   .data:00000008 mclk
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1785   .text:00000000 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1788   .text:00000000 DelayMs
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1839   .text:00000064 sys_init
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1936   .text:00000158 $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1962   .text:000001a8 port_init
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:1959   .text:000001a8 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccOT89Rf.s:2070   .text:000002bc $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS
