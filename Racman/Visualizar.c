@@ -15,8 +15,8 @@ extern int pos_racman_propio_y;
 extern int pos_racman_enemigo_x;
 extern int pos_racman_enemigo_y;
 
-int direccion_racman_propio; //0 - arriba; 1 - izquierda; 2 - derecha; 3 - abajo; -1 - no se mueve
-int direccion_defecto_propio;
+extern int direccion_racman_propio; //0 - arriba; 1 - izquierda; 2 - derecha; 3 - abajo; -1 - no se mueve
+extern int direccion_defecto_propio;
 
 extern int jugador;
 extern int tipo_juego;
