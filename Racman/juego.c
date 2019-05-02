@@ -106,15 +106,15 @@ void realizar_movimiento(){
 			fin_partida = 0;
 	}
 	if(tipo_juego == 1){
-		/*if(jugador == 1){
+		if(jugador == 1){
 			comproar_mov_fantasma();
 			if(comido == 1)
 				mover = -1;
 		}
 		
 		int direccion_enemigo = envios_uart(mover);
-		*/
-
+		
+/*
 		if(mover == 1){
 			Uart_SendByte(direccion_racman_propio);
 		}else if (mover == 0){
@@ -136,7 +136,7 @@ void realizar_movimiento(){
 			break;
 			pt_str = str;
 		}
-
+*/
 		if(direccion_enemigo == -1){
 			//poner -1 a las posiciones y eliminar los pixels del enemigo
 			limpiar_pixels(pos_racman_enemigo_x, pos_racman_enemigo_y);
@@ -637,8 +637,8 @@ int envios_uart(int mover){
 	int i;
 	int direccion_enemigo;
 	if (jugador == 1){
-		char* recepcion[3];
-		char* envio[11];
+		char recepcion[2];
+		char envio[10];
 
 
 		if(mover == 1){
@@ -649,12 +649,11 @@ int envios_uart(int mover){
 		}else{ //cuando mover es -1, racman ha muerto
 			envio[0] = -1;		
 		}
-		envio[1] = puntos_jugador; 
 		
 		for(i = 0; i < 8; i++){
-			envio[i+2] = fantasmas[i];
+			envio[i+1] = fantasmas[i];
 		}
-		envio[10] = 'f';
+		envio[9] = 'f';
 
 		Uart_SendString(envio);
 		char *pt_str = recepcion;
@@ -666,17 +665,17 @@ int envios_uart(int mover){
 				break;
 			recepcion[i] = *pt_str;
 			i++;
-			pt_str = recepcion;
+			//pt_str = recepcion;
 		}
 		//TODO leer los puntos de cada jugador
-		puntos_jugador_1 = puntos_jugador;
-		puntos_jugador_2 = recepcion[1];
+		//puntos_jugador_1 = puntos_jugador;
+		//puntos_jugador_2 = recepcion[1];
 		
 		direccion_enemigo = recepcion[0];
 
 	}else{
-		char recepcion[11];
-		char envio[3];
+		char recepcion[10];
+		char envio[2];
 
 		if(mover == 1){
 			envio[0] = direccion_racman_propio;
@@ -685,9 +684,9 @@ int envios_uart(int mover){
 		}else{ //cuando mover es -1, racman ha muerto
 			envio[0] = -1;		
 		}
-		envio[1] = puntos_jugador;
+		//envio[1] = puntos_jugador;
 
-		envio[2] = 'f';
+		envio[1] = 'f';
 
 		Uart_SendString(*envio);
 		char *pt_str = recepcion;
@@ -699,15 +698,34 @@ int envios_uart(int mover){
 				break;
 			recepcion[i] = *pt_str;
 			i++;
-			pt_str = recepcion;
+			//pt_str = recepcion;
 		}
 		//TODO leer los puntos de cada jugador
-		puntos_jugador_2 = puntos_jugador;
-		puntos_jugador_1 = recepcion[1];
+		//puntos_jugador_2 = puntos_jugador;
+		//puntos_jugador_1 = recepcion[1];
 		
 		direccion_enemigo = recepcion[0];
-		for(i = 2; i < 6; i += 2){
+		int i, j;
+		for (i = 0; i<320/16; i++){
+			for (j = 0; j<240/16; j++){
+				if(mapa[j][i] == 9){
+					limpiar_pixels(i, j);
+					mapa[j][i] -= 9;
+				}else if(mapa[j][i] == 10){
+					limpiar_pixels(i, j);
+					poner_punto(i, j, 0);
+					mapa[j][i] -= 9;
+				}else if(mapa[j][i] == 10){
+					limpiar_pixels(i, j);
+					poner_punto(i, j, 1);
+					mapa[j][i] -= 9;
+				}
+			}
+		}
+		for(i = 1; i < 5; i += 2){
 			mapa[recepcion[i]][recepcion[i+1]] += 9;
+			limpiar_pixels(recepcion[i+1], recepcion[i]);
+			dibujar_coco(recepcion[i+1], recepcion[i]);
 		}
 	}
 	
