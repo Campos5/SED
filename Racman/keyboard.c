@@ -17,6 +17,8 @@ int key;
 extern int puntos_jugador_1;
 extern int puntos_jugador_2;
 
+extern int direccion_racman_propio;
+
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
 void KeyboardInt(void) __attribute__ ((interrupt ("IRQ")));

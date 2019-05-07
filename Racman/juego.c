@@ -760,27 +760,6 @@ int quedan_puntos(){
 
 void fin_de_partida(int gana){
 	//TODO
-    int puntos_jugador_enemigo;
-	Uart_SendByte(puntos_jugador);
-
-    char str[1];
-    char *pt_str = str;
-    while(1){
-        //TODO dibujar fantasmas y actualizar el mapa si es el jugador 2
-        *pt_str = Uart_Getch(); // leer caracter
-        puntos_jugador_enemigo = *pt_str;
-        break;
-        pt_str = str;
-    }
-
-
-	if(jugador == 1){
-		puntos_jugador_1 = puntos_jugador;
-		puntos_jugador_2 = puntos_jugador_enemigo;
-    }else{
-		puntos_jugador_2 = puntos_jugador;
-		puntos_jugador_1 = puntos_jugador_enemigo;
-    }
 
 	if( tipo_juego == 0){
 		pantalla_en_negro();
@@ -788,6 +767,30 @@ void fin_de_partida(int gana){
 		pantalla_fin_juego_solitario(gana, puntos_jugador_1);
 		
 	}else{
+	    int puntos_jugador_enemigo;
+		Uart_SendByte(puntos_jugador);
+
+	    char str[1];
+	    char *pt_str = str;
+	    while(1){
+	        //TODO dibujar fantasmas y actualizar el mapa si es el jugador 2
+	        *pt_str = Uart_Getch(); // leer caracter
+	        puntos_jugador_enemigo = *pt_str;
+	        break;
+
+
+	        pt_str = str;
+	    }
+
+		if(jugador == 1){
+			puntos_jugador_1 = puntos_jugador;
+			puntos_jugador_2 = puntos_jugador_enemigo;
+	    }else{
+			puntos_jugador_2 = puntos_jugador;
+			puntos_jugador_1 = puntos_jugador_enemigo;
+	    }
+
+
 		pantalla_en_negro();
 		DelayMs(1000);
 		pantalla_fin_juego_doble(puntos_jugador_1, puntos_jugador_2);
