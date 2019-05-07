@@ -32,7 +32,6 @@ void keyboard_init(){
 	puntos_jugador_2 = 0;
 	mover = 0;
 	direccion_enemigo = 0;
-	salir_juego = 0;
 	/* Configurar el puerto G (si no lo estuviese ya) */	
 		// Establece la funcion de los pines (EINT0-7)
 	//rPCONG = 0xFFFF3
