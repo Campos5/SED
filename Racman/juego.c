@@ -31,6 +31,10 @@ extern int puntos_jugador_1;
 extern int puntos_jugador_2;
 
 extern int puntos_jugador;
+extern int salir_juego;
+
+extern int mover;
+extern int direccion_enemigo;
 
 /*--- variables internas ---*/
 
@@ -60,8 +64,10 @@ void realizar_movimiento(){
 	int fin_partida = -1;
 	int mover = 0;
 
-	mover = comprobar_mov_propio(direccion_racman_propio);
-
+	//Si ya ha perdido, manda siempre la posicion -1
+	if (mover != 255) {
+		mover = comprobar_mov_propio(direccion_racman_propio);
+	}
 
 	if(mover == 1){ //se ha movido donde dice el user
 		direccion_defecto_propio = direccion_racman_propio;
@@ -112,9 +118,9 @@ void realizar_movimiento(){
 				mover = -1;
 		}
 		
-		int direccion_enemigo = envios_uart(mover);
+	//	int direccion_enemigo = envios_uart(mover);
 		
-/*
+
 		if(mover == 1){
 			Uart_SendByte(direccion_racman_propio);
 		}else if (mover == 0){
@@ -129,15 +135,15 @@ void realizar_movimiento(){
 		int direccion_enemigo;
 		char str[1];
 		char *pt_str = str;
-		while(1){
+		while(1 && direccion_enemigo != 255){
 			//TODO dibujar fantasmas y actualizar el mapa si es el jugador 2
 			*pt_str = Uart_Getch(); // leer caracter
 			direccion_enemigo = *pt_str;
 			break;
 			pt_str = str;
 		}
-*/
-		if(direccion_enemigo == -1){
+
+		if(direccion_enemigo == 255){
 			//poner -1 a las posiciones y eliminar los pixels del enemigo
 			limpiar_pixels(pos_racman_enemigo_x, pos_racman_enemigo_y);
 			pos_racman_enemigo_x = -1;
@@ -157,7 +163,7 @@ void realizar_movimiento(){
 			}
 		}
 
-		if(direccion_enemigo == -1 && mover == -1) //ambos han perdido
+		if(direccion_enemigo == 255 && mover == 255) //ambos han perdido
 			fin_de_partida(-1);
 
 	}
@@ -191,7 +197,7 @@ int comprobar_mov_propio(int direccion){
 					
 				}
 				if(fantasma_come(pos_racman_propio_x, pos_racman_propio_y - 1, -1, -1)){
-					return -1;
+					return 255;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
@@ -215,7 +221,7 @@ int comprobar_mov_propio(int direccion){
 					
 				}
 				if(fantasma_come(pos_racman_propio_x - 1, pos_racman_propio_y, -1, -1)){
-					return -1;
+					return 255;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
@@ -241,7 +247,7 @@ int comprobar_mov_propio(int direccion){
 				}
 
 				if(fantasma_come(pos_racman_propio_x + 1, pos_racman_propio_y, -1, -1)){
-					return -1;
+					return 255;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
@@ -266,7 +272,7 @@ int comprobar_mov_propio(int direccion){
 				
 				}
 				if(fantasma_come(pos_racman_propio_x, pos_racman_propio_y + 1, -1, -1)){
-					return -1;
+					return 255;
 				}
 
 				mapa[pos_racman_propio_y][pos_racman_propio_x] = 0;
@@ -764,7 +770,7 @@ void fin_de_partida(int gana){
 	if( tipo_juego == 0){
 		pantalla_en_negro();
 		DelayMs(1000);
-		pantalla_fin_juego_solitario(gana, puntos_jugador_1);
+		pantalla_fin_juego_solitario(gana, puntos_jugador);
 		
 	}else{
 	    int puntos_jugador_enemigo;

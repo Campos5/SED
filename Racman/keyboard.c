@@ -18,6 +18,8 @@ extern int puntos_jugador_1;
 extern int puntos_jugador_2;
 
 extern int direccion_racman_propio;
+int mover;
+int direccion_enemigo;
 
 /*--- Declaracion de funciones ---*/
 void keyboard_init();
@@ -28,6 +30,9 @@ void keyboard_init(){
 
 	puntos_jugador_1 = 0;
 	puntos_jugador_2 = 0;
+	mover = 0;
+	direccion_enemigo = 0;
+	salir_juego = 0;
 	/* Configurar el puerto G (si no lo estuviese ya) */	
 		// Establece la funcion de los pines (EINT0-7)
 	//rPCONG = 0xFFFF3
