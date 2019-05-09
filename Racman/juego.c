@@ -62,7 +62,6 @@ void realizar_movimiento(){
 	int y_ant = pos_racman_propio_y;
 
 	int fin_partida = -1;
-	int mover = 0;
 
 	//Si ya ha perdido, manda siempre la posicion -1
 	if (mover != 255) {
@@ -96,8 +95,10 @@ void realizar_movimiento(){
 		if(tipo_juego == 0){
 			fin_partida = 0;
 		}else{
-			mapa[pos_racman_propio_y][pos_racman_propio_x] -= 0;
-			limpiar_pixels(pos_racman_propio_x, pos_racman_propio_y);
+			if(pos_racman_propio_y != -1 && pos_racman_propio_x != -1){
+				mapa[pos_racman_propio_y][pos_racman_propio_x] -= 3 * jugador;
+				limpiar_pixels(pos_racman_propio_x, pos_racman_propio_y);
+			}
 			//Al tener -1 como posición no va a poder moverse
 			pos_racman_propio_x = -1;
 			pos_racman_propio_y = -1;
@@ -112,13 +113,14 @@ void realizar_movimiento(){
 			fin_partida = 0;
 	}
 	if(tipo_juego == 1){
+		/*Seria necesario si se moviesen los fantasmas en multijugador
 		if(jugador == 1){
 			comproar_mov_fantasma();
-			if(comido == 1)
-				mover = -1;
 		}
-		
-	//	int direccion_enemigo = envios_uart(mover);
+		if(comido == 1)
+			mover = -1;
+		int direccion_enemigo = envios_uart(mover);
+		*/
 		
 
 		if(mover == 1){
@@ -130,13 +132,10 @@ void realizar_movimiento(){
 			Uart_SendByte(mover); 
 		}
 
-		//TODO mandar posición de los fantasmas si es el jugador 1
-		//TODO mandar los puntos
 		int direccion_enemigo;
 		char str[1];
 		char *pt_str = str;
 		while(1 && direccion_enemigo != 255){
-			//TODO dibujar fantasmas y actualizar el mapa si es el jugador 2
 			*pt_str = Uart_Getch(); // leer caracter
 			direccion_enemigo = *pt_str;
 			break;
@@ -145,7 +144,16 @@ void realizar_movimiento(){
 
 		if(direccion_enemigo == 255){
 			//poner -1 a las posiciones y eliminar los pixels del enemigo
-			limpiar_pixels(pos_racman_enemigo_x, pos_racman_enemigo_y);
+			if(pos_racman_enemigo_y != -1 && pos_racman_enemigo_x != -1){
+				int jugador_enemigo = 0;
+				if(jugador == 1)
+					jugador_enemigo = 2;
+				else
+					jugador_enemigo = 1;
+
+				mapa[pos_racman_enemigo_y][pos_racman_enemigo_x] -= 3 * jugador_enemigo;
+				limpiar_pixels(pos_racman_enemigo_x, pos_racman_enemigo_y);
+			}
 			pos_racman_enemigo_x = -1;
 			pos_racman_enemigo_y = -1;
 		}else{
@@ -163,8 +171,10 @@ void realizar_movimiento(){
 			}
 		}
 
-		if(direccion_enemigo == 255 && mover == 255) //ambos han perdido
+		if(direccion_enemigo == 255 && mover == 255){ //ambos han perdido
+			salir_juego = 1;
 			fin_de_partida(-1);
+		}
 
 	}
 
@@ -172,10 +182,10 @@ void realizar_movimiento(){
 		fin_partida = 1;
 	}
 
-	if(fin_partida == -1){
+	if(fin_partida == -1 && salir_juego == 0){
 		lanzarTimer(0);
 
-	}else{
+	}else if(salir_juego == 0){
 		fin_de_partida(fin_partida);
 	}
 
