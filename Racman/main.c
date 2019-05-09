@@ -8,18 +8,19 @@
 int pos_racman_propio_x;
 int pos_racman_propio_y;
 
-
 int pos_racman_enemigo_x;
 int pos_racman_enemigo_y;
 
+int direccion_racman_propio;
+int direccion_defecto_propio;
+
 int jugador;
-
-
 int tipo_juego;
 int salir_juego;
 
 int puntos_jugador_1;
 int puntos_jugador_2;
+int puntos_jugador;
 
 extern void Eint4567_init();
 extern void keyboard_init();
@@ -45,7 +46,8 @@ void Main(void){
 
 	init_visualizacion();
 
-	//Uart_Config(); // configuración de interrupciones y buffers
+	puntos_jugador = 0;
+	//Uart_Config(); // configuraciï¿½n de interrupciones y buffers
 
 	char *pt_str = str;
 	while(1){
